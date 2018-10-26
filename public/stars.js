@@ -83,6 +83,9 @@ function create ()
 
     stars.children.iterate(function (child) {
         child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+        child.setBounceX(0.5);
+        child.setVelocityX(Phaser.Math.FloatBetween(-20, 20));
+        child.setCollideWorldBounds(true);
     });
 
     // Setup bombs
@@ -94,6 +97,9 @@ function create ()
 
     bombs.children.iterate(function (child) {
         child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+        child.setBounceX(0.5);
+        child.setVelocityX(Phaser.Math.FloatBetween(-20, 20));
+        child.setCollideWorldBounds(true);
     });
 
     scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });

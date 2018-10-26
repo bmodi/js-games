@@ -18,6 +18,7 @@ var config = {
 
 var player;
 var stars;
+var bombs;
 var platforms;
 var cursors;
 var score = 0;
@@ -73,6 +74,7 @@ function create ()
 
     cursors = this.input.keyboard.createCursorKeys();
 
+    // Setup stars
     stars = this.physics.add.group({
         key: 'star',
         repeat: 11,
@@ -80,15 +82,25 @@ function create ()
     });
 
     stars.children.iterate(function (child) {
-
         child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+    });
 
+    // Setup bombs
+    bombs = this.physics.add.group({
+        key: 'bomb',
+        repeat: 11,
+        setXY: { x: 12, y: 0, stepX: 70 }
+    });
+
+    bombs.children.iterate(function (child) {
+        child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
     });
 
     scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
 
     this.physics.add.collider(player, platforms);
     this.physics.add.collider(stars, platforms);
+    this.physics.add.collider(bombs, platforms);
 
     this.physics.add.overlap(player, stars, collectStar, null, this);
 }

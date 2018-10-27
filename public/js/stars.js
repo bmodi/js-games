@@ -11,7 +11,7 @@ var config = {
     },
     scene: {
         preload: preload,
-        create: create,
+        create: createGame,
         update: update
     }
 };

@@ -10,7 +10,7 @@ export var cursors;
 export var score = 0;
 export var scoreText;
 
-export default function createGame ()
+export default function createScene ()
 {
     this.add.image(400, 300, 'sky');
 

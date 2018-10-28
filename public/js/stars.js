@@ -1,5 +1,5 @@
 import preload from "./preload.js";
-import createGame from "./createGame.js";
+import createScene from "./createScene.js";
 import update from "./update.js";
 
 var config = {
@@ -15,7 +15,7 @@ var config = {
     },
     scene: {
         preload: preload,
-        create: createGame,
+        create: createScene,
         update: update
     }
 };

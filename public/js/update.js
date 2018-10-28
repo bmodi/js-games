@@ -1,4 +1,4 @@
-import { player, cursors } from "./createGame.js";
+import { player, cursors } from "./createScene.js";
 
 export default function update ()
 {

@@ -1,3 +1,5 @@
+import { createStars, createBombs } from "./createNonPlayerElements.js";
+
 export var player;
 export var stars;
 export var bombs;
@@ -45,33 +47,8 @@ export default function createGame ()
 
     cursors = this.input.keyboard.createCursorKeys();
 
-    // Setup stars
-    stars = this.physics.add.group({
-        key: 'star',
-        repeat: 11,
-        setXY: { x: 12, y: 0, stepX: 70 }
-    });
-
-    stars.children.iterate(function (child) {
-        child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-        child.setBounceX(0.5);
-        child.setVelocityX(Phaser.Math.FloatBetween(-20, 20));
-        child.setCollideWorldBounds(true);
-    });
-
-    // Setup bombs
-    bombs = this.physics.add.group({
-        key: 'bomb',
-        repeat: 11,
-        setXY: { x: 12, y: 0, stepX: 70 }
-    });
-
-    bombs.children.iterate(function (child) {
-        child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-        child.setBounceX(0.5);
-        child.setVelocityX(Phaser.Math.FloatBetween(-20, 20));
-        child.setCollideWorldBounds(true);
-    });
+    stars = createStars(this);
+    bombs = createBombs(this);
 
     scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
 

@@ -1,7 +1,7 @@
 export function createPlayer(parent) {
-    var newPlayer = parent.physics.add.sprite(100, 450, 'dude');
-    newPlayer.setBounce(0.2);
-    newPlayer.setCollideWorldBounds(true);
+    var player = parent.physics.add.sprite(100, 450, 'dude');
+    player.setBounce(0.2);
+    player.setCollideWorldBounds(true);
     parent.anims.create({
         key: 'left',
         frames: parent.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
@@ -19,5 +19,5 @@ export function createPlayer(parent) {
         frameRate: 10,
         repeat: -1
     });
-    return newPlayer;
+    return player;
 }

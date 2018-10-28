@@ -1,5 +1,6 @@
 import { createStars, createBombs } from "./createNonPlayerElements.js";
 import { createPlayer } from "./createPlayer.js";
+import { createPlatforms } from "./createPlatforms.js";
 
 export var player;
 export var stars;
@@ -13,13 +14,7 @@ export default function createGame ()
 {
     this.add.image(400, 300, 'sky');
 
-    platforms = this.physics.add.staticGroup();
-
-    platforms.create(400, 568, 'ground').setScale(2).refreshBody();
-
-    platforms.create(600, 400, 'ground');
-    platforms.create(50, 250, 'ground');
-    platforms.create(750, 220, 'ground');
+    platforms = createPlatforms(this);
 
     player = createPlayer(this);
 

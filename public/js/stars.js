@@ -1,3 +1,7 @@
+import preload from "./preload.js";
+import createGame from "./createGame.js";
+import update from "./update.js";
+
 var config = {
     type: Phaser.AUTO,
     width: 800,
@@ -15,13 +19,5 @@ var config = {
         update: update
     }
 };
-
-var player;
-var stars;
-var bombs;
-var platforms;
-var cursors;
-var score = 0;
-var scoreText;
 
 var game = new Phaser.Game(config);

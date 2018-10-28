@@ -1,4 +1,12 @@
-function createGame ()
+export var player;
+export var stars;
+export var bombs;
+export var platforms;
+export var cursors;
+export var score = 0;
+export var scoreText;
+
+export default function createGame ()
 {
     this.add.image(400, 300, 'sky');
 
@@ -72,4 +80,12 @@ function createGame ()
     this.physics.add.collider(bombs, platforms);
 
     this.physics.add.overlap(player, stars, collectStar, null, this);
+}
+
+function collectStar (player, star)
+{
+    star.disableBody(true, true);
+
+    score += 10;
+    scoreText.setText('Score: ' + score);
 }

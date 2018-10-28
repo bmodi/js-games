@@ -1,4 +1,6 @@
-function update ()
+import { player, cursors } from "./createGame.js";
+
+export default function update ()
 {
     if (cursors.left.isDown)
     {

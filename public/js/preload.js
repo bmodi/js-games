@@ -1,4 +1,4 @@
-function preload ()
+export default function preload ()
 {
     this.load.image('sky', 'images/sky.png');
     this.load.image('ground', 'images/platform.png');

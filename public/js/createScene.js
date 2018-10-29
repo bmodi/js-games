@@ -19,6 +19,7 @@ export default function createScene ()
     player = createPlayer(this);
 
     cursors = this.input.keyboard.createCursorKeys();
+    this.input.addPointer(1);
 
     stars = createStars(this);
     bombs = createBombs(this);

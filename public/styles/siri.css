@@ -17,19 +17,12 @@ body {
   
   /* Style the list items */
   ul li {
-    cursor: pointer;
     position: relative;
     padding: 12px 8px 12px 40px;
     list-style-type: none;
     background: #4bd87a;
     font-size: 18px;
     transition: 0.2s;
-    
-    /* make the list items unselectable */
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
   }
   
   /* Set all odd list items to a different color (zebra-stripes) */

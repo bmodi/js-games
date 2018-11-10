@@ -21,7 +21,7 @@ body {
     position: relative;
     padding: 12px 8px 12px 40px;
     list-style-type: none;
-    background: #eee;
+    background: #4bd87a;
     font-size: 18px;
     transition: 0.2s;
     
@@ -34,7 +34,7 @@ body {
   
   /* Set all odd list items to a different color (zebra-stripes) */
   ul li:nth-child(odd) {
-    background: #4bd87a;
+    background: #eee;
   }
   
   /* Bright background-color on hover */

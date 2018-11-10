@@ -12,12 +12,13 @@
 <p>Try the following commands:</p>
 <ol>
   <li>hello:  Siri will greet you</li>
-  <li>temperature:  Siri will tell you what to wear</li>
+  <li>some temperature:  Siri will tell you what to wear</li>
+  <li>count:  Siri will tell you how many questions you've asked so far</li>
 </ol>
 
 <div id="myDIV" class="header">
   <h2 style="margin:5px">Hey Siri!</h2>
-  <input type="text" id="myInput" placeholder="Ask me anything...">
+  <input type="text" id="myInput" placeholder="Ask me anything..." onkeypress="checkField()">
   <span onclick="newElement()" class="addBtn">Speak</span>
 </div>
 

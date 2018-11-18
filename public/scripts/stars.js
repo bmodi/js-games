@@ -5,7 +5,9 @@ var platforms;
 var cursors;
 var score = 0;
 var scoreText;
+var gameStatusText;
 var gameOver = false;
+var scene;
 
 var config = {
     type: Phaser.AUTO,
@@ -27,8 +29,7 @@ var config = {
 
 var game = new Phaser.Game(config);
 
-function preload ()
-{
+function preload() {
     this.load.image('sky', 'images/sky.png');
     this.load.image('ground', 'images/platform.png');
     this.load.image('star', 'images/star.png');
@@ -36,37 +37,50 @@ function preload ()
     this.load.spritesheet('dude', 'images/dude.png', { frameWidth: 32, frameHeight: 48 });
 }
 
-function createScene ()
+function createScene()
 {
-    this.add.image(400, 300, 'sky');
+    scene=this;
+    scene.add.image(400, 300, 'sky');
 
-    platforms = createPlatforms(this);
+    platforms = createPlatforms(scene);
 
-    player = createPlayer(this);
+    cursors = scene.input.keyboard.createCursorKeys();
+    scene.input.addPointer(1);
+    scoreText = scene.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
 
-    cursors = this.input.keyboard.createCursorKeys();
-    this.input.addPointer(1);
+    scene.input.on('pointerdown', function (pointer) {
+        if (gameOver) {
+            score=0;
+            scoreText.setText('Score: ' + score);
+            stars.clear(true,true);
+            stars = createStars(scene);
+            bombs.clear(true,true);
+            bombs = createStars(scene);
+            player.destroy();
+            player = createPlayer(scene);
 
-    stars = createStars(this);
-    bombs = createBombs(this);
+            gameOver=false;
+        }
+    }, scene);
 
-    scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+    player = createPlayer(scene);
+    stars = createStars(scene);
+    bombs = createBombs(scene);
 
-    this.physics.add.collider(player, platforms);
-    this.physics.add.collider(stars, platforms);
-    this.physics.add.collider(bombs, platforms);
+    scene.physics.add.collider(player, platforms);
+    scene.physics.add.collider(stars, platforms);
+    scene.physics.add.collider(bombs, platforms);
 
-    this.physics.add.overlap(player, stars, collectStar, null, this);
-    this.physics.add.collider(player, bombs, hitBomb, null, this);
+    scene.physics.add.overlap(player, stars, collectStar, null, scene);
+    scene.physics.add.collider(player, bombs, hitBomb, null, scene);
 }
 
-function collectStar (player, star)
-{
-    star.disableBody(true, true);
+function collectStar(player, star) {
+    star.destroy();
 
     score += 10;
     scoreText.setText('Score: ' + score);
-    
+
     var x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
 
     var bomb = bombs.create(x, 16, 'bomb');
@@ -76,13 +90,14 @@ function collectStar (player, star)
     bomb.allowGravity = false;
 }
 
-function hitBomb (player, bomb)
-{
+function hitBomb(player, bomb) {
     this.physics.pause();
 
     player.setTint(0xff0000);
 
     player.anims.play('turn');
+
+    gameStatusText = this.add.text(250, 200, 'Game Over', { fontSize: '64px', fill: '#000' });
 
     gameOver = true;
 }
@@ -99,6 +114,7 @@ function createStars(parent) {
         child.setVelocityX(Phaser.Math.FloatBetween(-20, 20));
         child.setCollideWorldBounds(true);
     });
+
     return stars;
 }
 
@@ -145,38 +161,33 @@ function createPlatforms(parent) {
     return platforms;
 
     function addBlock(startX, startY, width, height, color) {
-        platforms.add(parent.add.rectangle(startX+width/2, startY+height/2, width, height, color));
+        platforms.add(parent.add.rectangle(startX + width / 2, startY + height / 2, width, height, color));
     }
 }
 
-function update ()
-{
-    if ( !gameOver ) {
+function update() {
+    if (!gameOver) {
         if (cursors.left.isDown ||
-            (this.input.pointer1.isDown && this.input.pointer1.x<400))
-        {
+            (this.input.pointer1.isDown && this.input.pointer1.x < 400)) {
             player.setVelocityX(-160);
 
             player.anims.play('left', true);
         }
         else if (cursors.right.isDown ||
-            (this.input.pointer1.isDown && this.input.pointer1.x>400))
-        {
+            (this.input.pointer1.isDown && this.input.pointer1.x > 400)) {
             player.setVelocityX(160);
 
             player.anims.play('right', true);
         }
-        else
-        {
+        else {
             player.setVelocityX(0);
 
             player.anims.play('turn');
         }
 
         if ((cursors.up.isDown ||
-            (this.input.pointer1.isDown && this.input.pointer1.y<300))
-            && player.body.touching.down)
-        {
+            (this.input.pointer1.isDown && this.input.pointer1.y < 300))
+            && player.body.touching.down) {
             player.setVelocityY(-330);
         }
     }

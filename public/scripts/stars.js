@@ -50,19 +50,16 @@ function createScene()
 
     scene.input.on('pointerdown', function (pointer) {
         if (gameOver) {
-            score=0;
-            scoreText.setText('Score: ' + score);
-            stars.clear(true,true);
-            stars = createStars(scene);
-            bombs.clear(true,true);
-            bombs = createStars(scene);
-            player.destroy();
-            player = createPlayer(scene);
-
+            resetScene();
+            createSprites();
             gameOver=false;
         }
     }, scene);
 
+    createSprites();
+}
+
+function createSprites() {
     player = createPlayer(scene);
     stars = createStars(scene);
     bombs = createBombs(scene);
@@ -73,6 +70,17 @@ function createScene()
 
     scene.physics.add.overlap(player, stars, collectStar, null, scene);
     scene.physics.add.collider(player, bombs, hitBomb, null, scene);
+
+    scene.physics.resume();
+}
+
+function resetScene() {
+    score=0;
+    scoreText.setText('Score: ' + score);
+    gameStatusText.setVisible(false);
+    stars.clear(true,true);
+    bombs.clear(true,true);
+    player.destroy();
 }
 
 function collectStar(player, star) {
@@ -92,13 +100,9 @@ function collectStar(player, star) {
 
 function hitBomb(player, bomb) {
     this.physics.pause();
-
     player.setTint(0xff0000);
-
     player.anims.play('turn');
-
     gameStatusText = this.add.text(250, 200, 'Game Over', { fontSize: '64px', fill: '#000' });
-
     gameOver = true;
 }
 

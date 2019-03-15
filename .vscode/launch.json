@@ -4,7 +4,7 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Stars App Server",
+            "name": "Launch Games Server",
             "program": "${workspaceFolder}/index.js",
             "env": {
                 "PORT": "8000"

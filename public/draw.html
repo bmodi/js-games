@@ -2,10 +2,28 @@
 <html>
 <head>
     <title>Drawing</title>
+    <script src="scripts/draw.js"></script>
     <link href="styles/default.css" rel="stylesheet" type="text/css">
+
+    <script>
+        function initCanvas() {
+            var canvas = document.getElementById('MainCanvas');
+            canvas.style.backgroundColor = 'rgba(0, 0, 0)';    
+        }
+        window.onload = initCanvas;
+    </script>
+
 </head>
 <body>
-    <canvas id="MainCanvas" width="800" height="800" style="border:5px solid #888888;"></canvas>  
+
+    <div id="myDIV" class="header">
+        <h2 style="margin:5px">ULTRA Paint!  The ULTIMATE Drawing Tool!  Create anything!</h2>
+        <input type="text" id="myInput" placeholder="Enter draw command..." onkeypress="checkField()">
+        <span onclick="drawCommand()" class="addBtn">Draw</span>
+    </div>
+      
+    <canvas id="MainCanvas" onload="initCanvas()" width="790" height="790" style="border:5px solid #888888;"></canvas>  
     <script src="scripts/draw.js" type="module"></script>
+
 </body>
 </html>

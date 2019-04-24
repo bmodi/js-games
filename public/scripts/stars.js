@@ -1,7 +1,10 @@
+// Game sprites
 var player;
 var enemy;
 var stars;
 var bombs;
+var gems;
+
 var platforms;
 var cursors;
 var score = 0;
@@ -34,6 +37,7 @@ function preload() {
     this.load.image('sky', 'images/sky.png');
     this.load.image('ground', 'images/platform.png');
     this.load.image('star', 'images/star.png');
+    this.load.image('gem', 'images/gem.png');
     this.load.image('bomb', 'images/bomb.png');
     this.load.spritesheet('dude', 'images/dude.png', { frameWidth: 32, frameHeight: 48 });
     this.load.spritesheet('enemy', 'images/invader.png', { frameWidth: 32, frameHeight: 32 });
@@ -66,11 +70,13 @@ function createSprites() {
     enemy = createEnemy(scene);
     stars = createStars(scene);
     bombs = createBombs(scene);
+    gems = createGems(scene);
 
     scene.physics.add.collider(player, platforms);
     scene.physics.add.collider(enemy, platforms);
     scene.physics.add.collider(stars, platforms);
     scene.physics.add.collider(bombs, platforms);
+    scene.physics.add.collider(gems, platforms);
 
     scene.physics.add.overlap(player, stars, collectStar, null, scene);
     scene.physics.add.collider(player, bombs, hitBomb, null, scene);
@@ -102,27 +108,7 @@ function collectStar(player, star) {
     bomb.setCollideWorldBounds(true);
     bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
     bomb.allowGravity = false;
-    var bomb = bombs.create(x, 16, 'bomb');
-    bomb.setBounce(1);
-    bomb.setCollideWorldBounds(true);
-    bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
-    bomb.allowGravity = false;
-    var bomb = bombs.create(x, 16, 'bomb');
-    bomb.setBounce(1);
-    bomb.setCollideWorldBounds(true);
-    bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
-    bomb.allowGravity = false;
-    var bomb = bombs.create(x, 16, 'bomb');
-    bomb.setBounce(1);
-    bomb.setCollideWorldBounds(true);
-    bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
-    bomb.allowGravity = false;
-    var bomb = bombs.create(x, 16, 'bomb');
-    bomb.setBounce(1);
-    bomb.setCollideWorldBounds(true);
-    bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
-    bomb.allowGravity = false;
-
+   
     // Create a new bouncing star
     var star = stars.create(x, 16, 'star');
     star.setBounce(1);
@@ -161,6 +147,24 @@ function createStars(parent) {
     });
 
     return stars;
+}
+
+
+function createGems(parent) {
+
+    var bomb = bombs.create(x, 16, 'bomb');
+    bomb.setBounce(1);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
+    bomb.allowGravity = false;
+        
+    var gems = parent.physics.add.group({
+        key: 'gem',
+        repeat: 4,
+        setXY: { x: 12, y: 300, stepX: 150 }
+    });
+
+    return gems;
 }
 
 function createBombs(parent) {
@@ -208,13 +212,19 @@ function createEnemy(parent) {
 function createPlatforms(parent) {
     var platforms = parent.physics.add.staticGroup();
 
+    var gapwidth = 50;
+    
     // Ground block
     addBlock(0, 500, 800, 100, 0x00aa00);
 
     // Jumping platforms
-    addBlock(600, 250, 200, 50, 0x8B4513);
-    addBlock(0, 175, 200, 50, 0x8B4513);
-    addBlock(300, 350, 200, 50, 0x8B4513);
+    addBlock(699, 250, 101, 25, 0x8B4513);
+    addBlock(175, 325, 250, 25, 0x8B4513);
+    addBlock(525, 150, 25, 300, 0x8B4513); // vertical block
+    addBlock(675, 150, 25, 125, 0x8B4513); // top L vertical piece
+    addBlock(675, 375, 125, 25, 0x8B4513); //blocker of death
+    addBlock(0, 225, 100, 25, 0x8B4513);
+    addBlock(300, 175, 1, 1, 0xff0000);
 
     return platforms;
 

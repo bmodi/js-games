@@ -107,8 +107,6 @@ function powerUp(player, gem) {
     scoreText.setText('Score: ' + score);
 
     playerSpeed=playerSpeed*1.5;
-
-    platforms.children.
 }
 
 function collectStar(player, star) {

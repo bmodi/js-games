@@ -83,7 +83,6 @@ function findSum(value) {
             console.log ("the total is " + total);
             console.log ("i is " + i);
         }
-        console.log ("sum is " + sum);
         return total
 }
 
@@ -94,14 +93,12 @@ function findFactor(factorValue) {
             console.log("j is " + j);
             console.log("product is " + product);
         }
-        console.log("factor is " + factor);
         return product
 }
 
 function findFahrenheit(degreesC) {
     var fahrenheitDegrees= 0;
     fahrenheitDegrees = (degreesC *9/5) + 32
-    console.log("celsius is " + celsius);
     console.log("degreesC is " + degreesC);
     return fahrenheitDegrees
 }
@@ -121,24 +118,70 @@ function reverseQuestion(reverseString) {
     return reversedQuestion
 }
 
-function getCommand(question) {
-    var command = "";
-    
+function getCommandWord(question, aCommandWord) {
+    var commandWord = "";
+    var commandWordEnd;
+        if (aCommandWord == true) {
+            commandWordEnd = question.search(" ")
+            commandWord = question.substring(0, commandWordEnd);
+        }
+    return commandWord
+}
+
+function getCommandValue(question, aCommandWord) {
+    var commandValue = ""
+    var commandWordEnd;
+        if (aCommandWord == true) {
+            commandWordEnd = question.search(" ")
+            commandValue = question.substring(commandWordEnd + 1);
+        }
+    return commandValue
+}
+
+function defaultResponse(whichanswer) {
+    var defaultAnswer;
+    if (whichanswer == 0) {
+        defaultAnswer = "Yeah whatever.";
+    } else if (whichanswer == 1) {
+        defaultAnswer = "Golf is not a sport. This is a well known fact.";
+    } else if (whichanswer == 2) {
+        defaultAnswer = "Our sun is actually a sun, not a star.";
+    } else if (whichanswer == 3) {
+        defaultAnswer = "Shrek is actually based of a character from Russina folklore named Barnaby.";
+    } else if (whichanswer == 4) {
+        defaultAnswer = "Did you know, pandas who get enough sleep don't have dark circles.";
+    } else if (whichanswer == 5) {
+        defaultAnswer = "Did you know, giraffes necks are shrinking due to increasing captivity and deforestation.";
+    } else if (whichanswer == 6) {
+        defaultAnswer = "Studies show it's more dangerous to have a ladder in the house than a loaded gun. That's why I ordered you 10 guns. In case some maniac tries to sneak in a ladder.";
+    } else if (whichanswer == 7) {
+        defaultAnswer = "You can never fail, if you never try.";
+    } else if (whichanswer == 8) {
+        defaultAnswer = "The best way to see if something is dangerous is to try it. Several dozen times.";
+    } else if (whichanswer == 9) {
+        defaultAnswer = "Unicorns are real. They're just fat and call themselves rhinos."
+    }
+console.log("whichanswer is " + whichanswer);
+return defaultAnswer
 }
 
 function getSiriResponse(question) {
-    sum = question.search("sum");
-    factor = question.search("factor");
-    celsius = question.search("celsius");
-    fahrenheit = question.search("fahrenheit");
-    reverse = question.search("reverse");
-    var answer = "no"
+    var aCommandWord = false
     var whichanswer = Math.round(  Math.random()*10  );
+    var sum = question.search("sum")
+    var factor = question.search("factor")
+    var celsius = question.search("celsius")
+    var fahrenheit = question.search("fahrenheit")
+    var reverse = question.search("reverse")
+    var answer = "no"
     ++count;
     var whichgreeting = Math.round(  Math.random()*2  );        
     var greeting = question == "hello" || question == "hi" || question == "hey" || question == "sup" || question == "yo" || question == "salutations" || question == "oi";
     var movieRecommendation = question == "what movie should I watch" || question == "what movie do I watch" || question == "whats a good movie" || question == "whats the best movie" || question == "whats the best movie to watch" || question == "whats a good movie to watch";
     whichMonster = Math.round(  Math.random()*2  )
+    if (sum>=0 || factor>=0 || celsius>=0 || fahrenheit>=0 || reverse>=0) {
+        aCommandWord = true
+    }
     if (whichMonster == 0) {
         monster = "vampire";
     } else if (whichMonster == 1) {
@@ -260,30 +303,17 @@ function getSiriResponse(question) {
         answer = reverseQuestion(reverseString);
     } else if (question == "what was my last entry") {
         answer = "Your last entry was: " + previousQuestion + "."
-    } else if (whichanswer == 0) {
-        answer = "Yeah whatever.";
-    } else if (whichanswer == 1) {
-        answer = "Golf is not a sport. This is a well known fact.";
-    } else if (whichanswer == 2) {
-        answer = "Our sun is actually a sun, not a star.";
-    } else if (whichanswer == 3) {
-        answer = "Shrek is actually based of a character from Russina folklore named Barnaby.";
-    } else if (whichanswer == 4) {
-        answer = "Did you know, pandas who get enough sleep don't have dark circles.";
-    } else if (whichanswer == 5) {
-        answer = "Did you know, giraffes necks are shrinking due to increasing captivity and deforestation.";
-    } else if (whichanswer == 6) {
-        answer = "Studies show it's more dangerous to have a ladder in the house than a loaded gun. That's why I ordered you 10 guns. In case some maniac tries to sneak in a ladder.";
-    } else if (whichanswer == 7) {
-        answer = "You can never fail, if you never try.";
-    } else if (whichanswer == 8) {
-        answer = "The best way to see if something is dangerous is to try it. Several dozen times.";
-    } else if (whichanswer == 9) {
-        answer = "Unicorns are real. They're just fat and call themselves rhinos."
+    } else {
+        var whichanswer = Math.round(  Math.random()*10  );
+        answer = defaultResponse(whichanswer)
     }
     if (question != "what was my last question") {
        previousQuestion = question
     }
+    getCommandWord(question, aCommandWord);
+    console.log("the command word is " + getCommandWord(question, aCommandWord));
+    console.log("the command value is " + getCommandValue(question, aCommandWord));
+    console.log("a command word is " + aCommandWord)
     return answer;
 }
 
@@ -297,7 +327,6 @@ function newElement() {
         var t = document.createTextNode(inputValue);
         li.appendChild(t);
         document.getElementById("myUL").appendChild(li);
-
         var sli = document.createElement("li");
         var st = document.createTextNode("SIRI:  " + getSiriResponse(inputValue));
         sli.appendChild(st);

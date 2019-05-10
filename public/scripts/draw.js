@@ -1,10 +1,12 @@
 
+var colour = 'rgba(0, 255, 0)'
+
 function drawLine(x1, y1, x2, y2) {
     var canvas = document.getElementById('MainCanvas');
     canvas.style.backgroundColor = 'rgba(0, 0, 0)';
 
     var context = canvas.getContext('2d');
-    context.strokeStyle = 'rgba(255, 0, 0)';
+    context.strokeStyle = colour;
     // Reset the current path
     context.beginPath();
     // Staring point (10,45)
@@ -12,6 +14,15 @@ function drawLine(x1, y1, x2, y2) {
     // End point (180,47)
     context.lineTo(x2+400, 400-y2);
     // Make the line visible
+    context.stroke();
+}
+
+function drawCircle(x, y, radius) {
+    var canvas = document.getElementById('MainCanvas');
+    var context = canvas.getContext('2d');
+    context.strokeStyle = colour;
+    context.beginPath();
+    context.arc(x+400, 400-y, radius, 0, 2 * Math.PI);
     context.stroke();
 }
 
@@ -64,14 +75,39 @@ function drawCommand() {
     if (!inputValue) {
         alert("You must write something!");
     } else {
-        if ( inputValue=="star" ) {
-            drawStar(200, 10, 0, 0);
-        } else if ( inputValue=="smallstar") {
+        if ( inputValue.substring(0, 4) == "star") {
+            var starCoordinates = inputValue.substring(5);
+            var starXDigits = starCoordinates.search(" ");
+            var starYSize = inputValue.substring(6 + starXDigits);
+            var starYDigits = starYSize.search(" ");
+            var starX = Number (inputValue.substring(5, 5 + starXDigits));
+            var starY = Number (inputValue.substring(6 + starXDigits, 6 + starXDigits + starYDigits));
+            var starSize = Number (inputValue.substring(7 + starXDigits + starYDigits));
+            console.log("starCoordinates are " + starCoordinates);
+            console.log("starXDigits is " + starXDigits);
+            console.log("starX is " + starX);
+            console.log("starY is " + starY);
+            console.log("starSize is " + starSize);
+            console.log("starYDigits is " + starYDigits);
+            drawStar(starSize, 10, starX, starY);
+        } else if ( inputValue=="small star") {
             drawStar(100, 5, 100, 50);
         } else if ( inputValue=="box" ) {
             drawBox(x1,y1,100);
-        } else if (inputValue=="small box") {
-            drawBox(0,0,50)
+        } else if (inputValue.substring(0, 9) == "small box") {
+            var boxCoordinates = inputValue.substring(10);
+            var boxXDigits = boxCoordinates.search(" ");
+            var boxYSize = inputValue.substring(11 + boxXDigits)
+            var boxYDigits = boxYSize.search(" ");
+            var boxX = Number(inputValue.substring(10, 10 + boxXDigits));
+            var boxY = Number(inputValue.substring(11 + boxXDigits, 11 + boxXDigits + boxYDigits));
+            var boxSize = Number (inputValue.substring(12 + boxXDigits + boxYDigits))
+            console.log("boxCoordinates are " + boxCoordinates);
+            console.log("boxXDigits is " + boxXDigits);
+            console.log("boxX is " + boxX);
+            console.log("boxY is " + boxY);
+            console.log("box size is " + boxSize);
+            drawBox(boxX, boxY, boxSize);
         } else if (inputValue=="big box") {
             drawBox(0,0, 200)
         } else if ( inputValue=="triangle") {
@@ -108,6 +144,44 @@ function drawCommand() {
                 drawTriangle(Math.round(Math.random()*300) - Math.round(Math.random()*300), Math.round(Math.random()*300) - Math.round(Math.random()*300));
             } else if (randomShape == 4) {
                 drawStarrySky();
+                console.log("randomShape is " + randomShape);
+            } 
+        } else if (inputValue.substring(0, 6) == "circle") {
+            var circleCoordinates = inputValue.substring(7);
+            var circleXDigits = circleCoordinates.search(" ");
+            var circleYSize = inputValue.substring(8 + circleXDigits)
+            var circleYDigits = circleYSize.search(" ");
+            var circleX = Number(inputValue.substring(7, 7 + circleXDigits));
+            var circleY = Number(inputValue.substring(8 + circleXDigits, 8 + circleXDigits + circleYDigits));
+            var circleSize = Number (inputValue.substring(9 + circleXDigits + circleYDigits))
+            console.log("circleCoordinates are " + circleCoordinates);
+            console.log("circleXDigits is " + circleXDigits);
+            console.log("circleX is " + circleX);
+            console.log("circleY is " + circleY);
+            console.log("circle size is " + circleSize);
+            drawCircle(circleX, circleY, circleSize);
+        } else if (inputValue.substring(0, 6) == "colour") {
+            var typedColour = inputValue.substring(7);
+            if (typedColour == "blue") {
+                colour = 'rgb(0, 0, 255)'
+            } else if (typedColour == "red") {
+                colour = 'rgb(255, 0, 0)'
+            } else if (typedColour == "green") {
+                colour = 'rgb(0, 255, 0'
+            } else if (typedColour == "purple") {
+                colour = 'rgb(102, 0, 102)'
+            } else if (typedColour == "pink") {
+                colour = 'rgb(255, 0, 255)'
+            } else if (typedColour == "orange") {
+                colour = 'rgb(255, 153, 0)'
+            } else if (typedColour == "yellow") {
+                colour = 'rgb(255, 255, 0)'
+            } else if (typedColour == "black") {
+                colour = '0, 0, 0'
+            } else if (typedColour == "brown") {
+                colour = 'rgb(102, 51, 0)'
+            } else if (typedColour == "white") {
+                colour = '255, 255, 255'
             }
         }
     }

@@ -295,13 +295,15 @@ function newElement() {
     } else {
         var li = document.createElement("li");
         var t = document.createTextNode(inputValue);
+        var list=document.getElementById("myUL");
         li.appendChild(t);
-        document.getElementById("myUL").appendChild(li);
 
         var sli = document.createElement("li");
         var st = document.createTextNode("SIRI:  " + getSiriResponse(inputValue));
         sli.appendChild(st);
-        document.getElementById("myUL").appendChild(sli);
+
+        list.insertBefore(sli, list.childNodes[0]);
+        list.insertBefore(li, list.childNodes[0]);
     }
 }
 

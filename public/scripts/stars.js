@@ -13,6 +13,8 @@ var gameStatusText;
 var gameOver = false;
 var scene;
 
+var playerSpeed=160;
+
 var config = {
     type: Phaser.AUTO,
     width: 800,
@@ -81,17 +83,32 @@ function createSprites() {
     scene.physics.add.overlap(player, stars, collectStar, null, scene);
     scene.physics.add.collider(player, bombs, hitBomb, null, scene);
     scene.physics.add.overlap(player, enemy, playerEnemyFight, null, scene);
+    scene.physics.add.overlap(player, gems, powerUp, null, scene);
 
     scene.physics.resume();
 }
 
 function resetScene() {
     score=0;
+    playerSpeed=160;
     scoreText.setText('Score: ' + score);
     gameStatusText.setVisible(false);
     stars.clear(true,true);
     bombs.clear(true,true);
-    player.destroy();
+    gems.clear(true,true);
+    enemy.destroy(true);
+    player.destroy(true);
+} 
+
+function powerUp(player, gem) {
+    gem.destroy();
+
+    score += 10;
+    scoreText.setText('Score: ' + score);
+
+    playerSpeed=playerSpeed*1.5;
+
+    platforms.children.
 }
 
 function collectStar(player, star) {
@@ -149,21 +166,20 @@ function createStars(parent) {
     return stars;
 }
 
+function createGem(parent, x, y) {
+    var gem = gems.create(x, y, 'gem');
+    gem.setBounce(0);
+    gem.setCollideWorldBounds(true);
+    gem.allowGravity = false;
+    return gem;
+}
 
 function createGems(parent) {
-
-    var bomb = bombs.create(x, 16, 'bomb');
-    bomb.setBounce(1);
-    bomb.setCollideWorldBounds(true);
-    bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
-    bomb.allowGravity = false;
-        
-    var gems = parent.physics.add.group({
-        key: 'gem',
-        repeat: 4,
-        setXY: { x: 12, y: 300, stepX: 150 }
-    });
-
+    gems = parent.physics.add.group();
+    createGem(parent, 300, 200);
+    createGem(parent, 300, 400);
+    createGem(parent, 50, 100);
+    createGem(parent, 500, 200);
     return gems;
 }
 
@@ -253,12 +269,11 @@ function update() {
         // Player control based on left/right/jump keys
         if (cursors.left.isDown ||
             (this.input.pointer1.isDown && this.input.pointer1.x < 400)) {
-            player.setVelocityX(-160);
+            player.setVelocityX(-playerSpeed);
             player.anims.play('left', true);
-        }
-        else if (cursors.right.isDown ||
+        } else if (cursors.right.isDown ||
             (this.input.pointer1.isDown && this.input.pointer1.x > 400)) {
-            player.setVelocityX(160);
+            player.setVelocityX(playerSpeed);
             player.anims.play('right', true);
         } else {
             player.setVelocityX(0);

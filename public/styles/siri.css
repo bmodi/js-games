@@ -27,12 +27,19 @@ body {
   
   /* Set all odd list items to a different color (zebra-stripes) */
   ul li:nth-child(odd) {
-    background: #eee;
+    background: #cccccc;
+  }
+
+  ul li:nth-child(even) {
+    border-bottom: 2px solid black;
+    margin-bottom: 5px;
   }
   
+
   /* Bright background-color on hover */
   ul li:hover {
     background: #e7db2d;
+    cursor: auto;
   }
   
   /* Style the header */
@@ -70,7 +77,6 @@ body {
     float: left;
     text-align: center;
     font-size: 16px;
-    cursor: pointer;
     transition: 0.3s;
     border-radius: 0;
   }

@@ -177,11 +177,13 @@ function drawCommand() {
             } else if (typedColour == "yellow") {
                 colour = 'rgb(255, 255, 0)'
             } else if (typedColour == "black") {
-                colour = '0, 0, 0'
+                colour = 'rgb(0, 0, 0)'
             } else if (typedColour == "brown") {
                 colour = 'rgb(102, 51, 0)'
             } else if (typedColour == "white") {
-                colour = '255, 255, 255'
+                colour = 'rgb(255, 255, 255)'
+            } else if (typedColour == "aqua") {
+                colour = '(0, 255, 255)'
             }
         }
     }

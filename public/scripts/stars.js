@@ -4,6 +4,7 @@ var enemy;
 var stars;
 var bombs;
 var gems;
+var gemsCollected = 0;
 
 var platforms;
 var cursors;
@@ -12,8 +13,11 @@ var scoreText;
 var gameStatusText;
 var gameOver = false;
 var scene;
+var playerFrozen = false;
+var enemyWallPhase = false;
 
 var playerSpeed=160;
+var jumpSpeed = 330;
 
 var config = {
     type: Phaser.AUTO,
@@ -100,13 +104,45 @@ function resetScene() {
     player.destroy(true);
 } 
 
+function resumePlayerSpeed() {
+    playerSpeed = 240;
+    jumpSpeed = 330;
+    playerFrozen = false;
+    enemyWallPhase = false;
+    return playerSpeed
+}
+
 function powerUp(player, gem) {
     gem.destroy();
 
     score += 10;
     scoreText.setText('Score: ' + score);
+    gemsCollected = gemsCollected+1;
 
-    playerSpeed=playerSpeed*1.5;
+
+    if (gemsCollected == 2) {
+        playerSpeed = 0;
+        jumpSpeed = 0;
+        playerFrozen = true;
+        enemyWallPhase = true;
+        setTimeout (resumePlayerSpeed, 2000);
+    } else {
+        playerSpeed=playerSpeed*1.5;
+    }
+        if (gemsCollected >= 5 && score>=10) {
+            score = score*2
+            scoreText.setText('Score: ' + score);
+                if (score>=500) {
+                    gameStatusText = this.add.text(250, 200, 'congratulations, you win!', { fontSize: '64px', fill: '#000' });
+                    gameOver = true;
+                } else {
+                    gameStatusText = this.add.text(50, 200, '*shakes head in disapointment* "not good enough"', { fontSize: '25px', fill: '#000' });
+                    gameOver = true;
+                }
+        } else if (gemsCollected >= 4) {
+            player.y = 100
+            player.x = 350
+        }
 }
 
 function collectStar(player, star) {
@@ -174,10 +210,11 @@ function createGem(parent, x, y) {
 
 function createGems(parent) {
     gems = parent.physics.add.group();
-    createGem(parent, 300, 200);
+    createGem(parent, 200, 200);
     createGem(parent, 300, 400);
     createGem(parent, 50, 100);
     createGem(parent, 500, 200);
+    createGem(parent, 350, 100);
     return gems;
 }
 
@@ -211,7 +248,7 @@ function createPlayer(parent) {
 }
 
 function createEnemy(parent) {
-    var enemy = parent.physics.add.sprite(400, 100, 'enemy');
+    var enemy = parent.physics.add.sprite(700, 100, 'enemy');
     enemy.setBounce(0.2);
     enemy.setCollideWorldBounds(true);
     parent.anims.create({
@@ -225,9 +262,7 @@ function createEnemy(parent) {
 
 function createPlatforms(parent) {
     var platforms = parent.physics.add.staticGroup();
-
-    var gapwidth = 50;
-    
+        
     // Ground block
     addBlock(0, 500, 800, 100, 0x00aa00);
 
@@ -238,7 +273,11 @@ function createPlatforms(parent) {
     addBlock(675, 150, 25, 125, 0x8B4513); // top L vertical piece
     addBlock(675, 375, 125, 25, 0x8B4513); //blocker of death
     addBlock(0, 225, 100, 25, 0x8B4513);
-    addBlock(300, 175, 1, 1, 0xff0000);
+    //addBlock(300, 175, 1, 1, 0xff0000); //dot
+    addBlock(300, 224, 100, 10, 0x8B4513); //box bottom
+    addBlock(300, 50, 100, 10, 0x8B4513); //box top
+    addBlock(300, 51, 10, 175, 0x8B4513); //box left
+    addBlock(390, 51, 10, 175, 0x8B4513); //box right
 
     return platforms;
 
@@ -252,13 +291,27 @@ function update() {
         // Control enemy to follow player
         enemy.anims.play('default', true);
 
-        if (player.x < enemy.x) {
+        if (player.x < enemy.x && playerFrozen) {
+            enemy.setVelocityX(-120);
+        } else if (player.x > enemy.x && playerFrozen) {
+            enemy.setVelocityX(120);
+        } else if (player.x < enemy.x) {
             enemy.setVelocityX(-60);
         } else if (player.x > enemy.x) {
             enemy.setVelocityX(60);
         }
 
-        if (player.y < enemy.y) {
+        if (playerFrozen) {
+            enemy.setTint(0xff0000);
+        } else {
+            enemy.setTint(0xffffff)
+        } 
+
+        if (player.y < enemy.y && playerFrozen) {
+            enemy.setVelocityY(-120);
+        } else if (player.y > enemy.y && playerFrozen) {
+            enemy.setVelocityY(120);
+        } else if (player.y < enemy.y) {
             enemy.setVelocityY(-60);
         } else if (player.y > enemy.y) {
             enemy.setVelocityY(60);
@@ -281,7 +334,7 @@ function update() {
         if ((cursors.up.isDown ||
             (this.input.pointer1.isDown && this.input.pointer1.y < 300))
             && player.body.touching.down) {
-            player.setVelocityY(-330);
+            player.setVelocityY(-jumpSpeed);
         } else if (cursors.down.isDown && !cursors.up.isDown && !cursors.left.isDown && !cursors.right.isDown) {
             player.setTint(0x00ff00);
         } else player.setTint(0xffffff);

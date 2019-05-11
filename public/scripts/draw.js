@@ -1,5 +1,5 @@
 
-var colour = 'rgba(0, 255, 0)'
+var colour = 'rgba(0, 0, 255)'
 
 function drawLine(x1, y1, x2, y2) {
     var canvas = document.getElementById('MainCanvas');

@@ -15,6 +15,8 @@ var gameOver = false;
 var scene;
 var playerFrozen = false;
 var enemyWallPhase = false;
+var enemyCollider;
+var badGem = Math.round( Math.random()*2 +2 )
 
 var playerSpeed=160;
 var jumpSpeed = 330;
@@ -79,10 +81,10 @@ function createSprites() {
     gems = createGems(scene);
 
     scene.physics.add.collider(player, platforms);
-    scene.physics.add.collider(enemy, platforms);
     scene.physics.add.collider(stars, platforms);
     scene.physics.add.collider(bombs, platforms);
     scene.physics.add.collider(gems, platforms);
+    enemyCollider = scene.physics.add.collider(enemy, platforms);
 
     scene.physics.add.overlap(player, stars, collectStar, null, scene);
     scene.physics.add.collider(player, bombs, hitBomb, null, scene);
@@ -102,13 +104,18 @@ function resetScene() {
     gems.clear(true,true);
     enemy.destroy(true);
     player.destroy(true);
+    gemsCollected = 0;
+    playerFrozen = false;
+    jumpSpeed = 330;
+    scene.physics.add.collider(enemy, platforms);
 } 
 
 function resumePlayerSpeed() {
-    playerSpeed = 240;
+    playerSpeed = 160*1.75*badGem;
     jumpSpeed = 330;
     playerFrozen = false;
     enemyWallPhase = false;
+    scene.physics.add.collider(enemy, platforms);
     return playerSpeed
 }
 
@@ -120,16 +127,17 @@ function powerUp(player, gem) {
     gemsCollected = gemsCollected+1;
 
 
-    if (gemsCollected == 2) {
+    if (gemsCollected == badGem) {
         playerSpeed = 0;
         jumpSpeed = 0;
         playerFrozen = true;
         enemyWallPhase = true;
+        enemyCollider.destroy();
         setTimeout (resumePlayerSpeed, 2000);
     } else {
-        playerSpeed=playerSpeed*1.5;
+        playerSpeed=playerSpeed*1.75;
     }
-        if (gemsCollected >= 5 && score>=10) {
+        if (gemsCollected >= 7 && score>=10) {
             score = score*2
             scoreText.setText('Score: ' + score);
                 if (score>=500) {
@@ -139,7 +147,7 @@ function powerUp(player, gem) {
                     gameStatusText = this.add.text(50, 200, '*shakes head in disapointment* "not good enough"', { fontSize: '25px', fill: '#000' });
                     gameOver = true;
                 }
-        } else if (gemsCollected >= 4) {
+        } else if (gemsCollected >= 6) {
             player.y = 100
             player.x = 350
         }
@@ -215,6 +223,8 @@ function createGems(parent) {
     createGem(parent, 50, 100);
     createGem(parent, 500, 200);
     createGem(parent, 350, 100);
+    createGem(parent, 600, 100);
+    createGem(parent, 135, 100);
     return gems;
 }
 

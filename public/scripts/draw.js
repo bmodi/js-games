@@ -75,7 +75,9 @@ function drawCommand() {
     if (!inputValue) {
         alert("You must write something!");
     } else {
-        if ( inputValue.substring(0, 4) == "star") {
+        if (inputValue=="starry sky") {
+            drawStarrySky();
+        } else if ( inputValue.substring(0, 4) == "star") {
             var starCoordinates = inputValue.substring(5);
             var starXDigits = starCoordinates.search(" ");
             var starYSize = inputValue.substring(6 + starXDigits);
@@ -114,8 +116,6 @@ function drawCommand() {
             drawTriangle(0, 100);
         } else if (inputValue=="house"){
             drawHouse(-100,-300);
-        } else if (inputValue=="starry sky") {
-            drawStarrySky();
         } else if (inputValue=="stars") {
             for (var i=0; i<=1; ++i) {
                 drawStar(200, 10, -175 + 300*i, 175-300*i);
@@ -184,6 +184,14 @@ function drawCommand() {
                 colour = 'rgb(255, 255, 255)'
             } else if (typedColour == "aqua") {
                 colour = '(0, 255, 255)'
+            }
+        } else if (inputValue == "village") {
+            for (var k=0; k<= 7; ++k) {
+                villageHouseX = Math.round( Math.random()*400 - Math.random()*400 );
+                console.log("villageHouseX is " + villageHouseX);
+                villageHouseY = Math.round( Math.random() - Math.random()*400 );
+                console.log("villageHouseY is " + villageHouseY);
+                drawHouse(villageHouseX, villageHouseY)
             }
         }
     }

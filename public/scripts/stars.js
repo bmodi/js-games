@@ -17,6 +17,7 @@ var playerFrozen = false;
 var enemyWallPhase = false;
 var enemyCollider;
 var badGem = Math.round( Math.random()*2 +2 )
+var numberOfGems = 8;
 
 var playerSpeed=160;
 var jumpSpeed = 330;
@@ -116,6 +117,14 @@ function resumePlayerSpeed() {
     playerFrozen = false;
     enemyWallPhase = false;
     scene.physics.add.collider(enemy, platforms);
+        if (enemy.x > 300 && enemy.x < 400 && enemy.y > 51 && enemy.y < 226) {
+            enemy.y = 50;
+                if (player.x < 400) {
+                    enemy.x = 700
+                } else {
+                    enemy.x = 100
+                }
+        }
     return playerSpeed
 }
 
@@ -137,7 +146,7 @@ function powerUp(player, gem) {
     } else {
         playerSpeed=playerSpeed*1.75;
     }
-        if (gemsCollected >= 7 && score>=10) {
+        if (gemsCollected >= numberOfGems && score>=10) {
             score = score*2
             scoreText.setText('Score: ' + score);
                 if (score>=500) {
@@ -147,7 +156,7 @@ function powerUp(player, gem) {
                     gameStatusText = this.add.text(50, 200, '*shakes head in disapointment* "not good enough"', { fontSize: '25px', fill: '#000' });
                     gameOver = true;
                 }
-        } else if (gemsCollected >= 6) {
+        } else if (gemsCollected >= numberOfGems - 1) {
             player.y = 100
             player.x = 350
         }
@@ -225,6 +234,7 @@ function createGems(parent) {
     createGem(parent, 350, 100);
     createGem(parent, 600, 100);
     createGem(parent, 135, 100);
+    createGem(parent, 750, 150)
     return gems;
 }
 

@@ -35,6 +35,9 @@ var y1=50;
 var randomShape;
 var moveBox = 10;
 var moveBoxSize = 100;
+var houseGap = 0;
+var houseSize = 0;
+var totalHouseWidth = 0;
 
 function drawStar(size, step, x, y) {
     for(var i=0; i<=size; i=i+step ) {
@@ -52,15 +55,15 @@ function drawBox(x, y, size) {
     drawLine(x,y+size,x,y);
 }
 
-function drawHouse(x,y) {
-    drawBox(x,y,200)
-    drawTriangle(x+100,y+300)
+function drawHouse(x,y, houseBoxSize) {
+    drawBox(x,y,houseBoxSize)
+    drawTriangle(x+houseBoxSize/2,y+houseBoxSize*1.5, houseBoxSize/2)
 }
 
-function drawTriangle(x,y) {
-    drawLine(x, y, x+100, y-100);
-    drawLine(x+100, y-100, x-100, y-100);
-    drawLine(x-100, y-100, x, y);
+function drawTriangle(x,y, triangleSize) {
+    drawLine(x, y, x+triangleSize, y-triangleSize);
+    drawLine(x+triangleSize, y-triangleSize, x-triangleSize, y-triangleSize);
+    drawLine(x-triangleSize, y-triangleSize, x, y);
 }
 
 function drawStarrySky() {
@@ -113,9 +116,9 @@ function drawCommand() {
         } else if (inputValue=="big box") {
             drawBox(0,0, 200)
         } else if ( inputValue=="triangle") {
-            drawTriangle(0, 100);
+            drawTriangle(0, 100, 200);
         } else if (inputValue=="house"){
-            drawHouse(-100,-300);
+            drawHouse(0, 0, 200);
         } else if (inputValue=="stars") {
             for (var i=0; i<=1; ++i) {
                 drawStar(200, 10, -175 + 300*i, 175-300*i);
@@ -185,14 +188,19 @@ function drawCommand() {
             } else if (typedColour == "aqua") {
                 colour = '(0, 255, 255)'
             }
-        } else if (inputValue == "village") {
-            for (var k=0; k<= 7; ++k) {
-                villageHouseX = Math.round( Math.random()*400 - Math.random()*400 );
-                console.log("villageHouseX is " + villageHouseX);
-                villageHouseY = Math.round( Math.random() - Math.random()*400 );
-                console.log("villageHouseY is " + villageHouseY);
-                drawHouse(villageHouseX, villageHouseY)
+        } else if (inputValue.substring(0, 7) == "village") {
+            var minimumHouseSize = Number (inputValue.substring(8))
+            console.log("minimum house size is " + minimumHouseSize);
+            for (var l = 0; l<=800; ++l) {
+                houseSize = Math.round( Math.random()*125)
+                houseGap = Math.round( Math.random()*20 ) + 10;
+                drawHouse(-400 + houseGap + totalHouseWidth, -50 - Math.round( Math.random()*300 ), minimumHouseSize + houseSize)
+                totalHouseWidth = totalHouseWidth + houseSize + minimumHouseSize + houseGap;
+                l = totalHouseWidth
             }
+        houseSize = 0;
+        houseGap = 0;
+        totalHouseWidth = 0;
         }
     }
 }

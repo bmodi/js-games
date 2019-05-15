@@ -38,6 +38,7 @@ var moveBoxSize = 100;
 var houseGap = 0;
 var houseSize = 0;
 var totalHouseWidth = 0;
+var showColour;
 
 function drawStar(size, step, x, y) {
     for(var i=0; i<=size; i=i+step ) {
@@ -75,6 +76,8 @@ function drawStarrySky() {
 // Create a new list item when clicking on the "Add" button
 function drawCommand() {
     var inputValue = document.getElementById("myInput").value;
+    showColour.setVisible(false);
+    showColour = this.add.text(0, 0, 'the colour is ' + colour, { fontSize: '64px', fill: '#ffffff' });
     if (!inputValue) {
         alert("You must write something!");
     } else {

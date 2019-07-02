@@ -160,6 +160,8 @@ function defaultResponse(whichanswer) {
         defaultAnswer = "The best way to see if something is dangerous is to try it. Several dozen times.";
     } else if (whichanswer == 9) {
         defaultAnswer = "Unicorns are real. They're just fat and call themselves rhinos."
+    } else if (whichanswer == 10) {
+        defaultAnswer = "The root word for advertisement is inadvertently"
     }
 console.log("whichanswer is " + whichanswer);
 return defaultAnswer
@@ -325,12 +327,16 @@ function newElement() {
     } else {
         var li = document.createElement("li");
         var t = document.createTextNode(inputValue);
+        var list=document.getElementById("myUL");
         li.appendChild(t);
         document.getElementById("myUL").appendChild(li);
+
         var sli = document.createElement("li");
         var st = document.createTextNode("SIRI:  " + getSiriResponse(inputValue));
         sli.appendChild(st);
-        document.getElementById("myUL").appendChild(sli);
+
+        list.insertBefore(sli, list.childNodes[0]);
+        list.insertBefore(li, list.childNodes[0]);
     }
 }
 

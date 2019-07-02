@@ -76,8 +76,6 @@ function drawStarrySky() {
 // Create a new list item when clicking on the "Add" button
 function drawCommand() {
     var inputValue = document.getElementById("myInput").value;
-    showColour.setVisible(false);
-    showColour = this.add.text(0, 0, 'the colour is ' + colour, { fontSize: '64px', fill: '#ffffff' });
     if (!inputValue) {
         alert("You must write something!");
     } else {
@@ -97,7 +95,7 @@ function drawCommand() {
             console.log("starY is " + starY);
             console.log("starSize is " + starSize);
             console.log("starYDigits is " + starYDigits);
-            drawStar(starSize, 10, starX, starY);
+            drawStar(starSize, starSize/20, starX, starY);
         } else if ( inputValue=="small star") {
             drawStar(100, 5, 100, 50);
         } else if ( inputValue=="box" ) {
@@ -189,7 +187,7 @@ function drawCommand() {
             } else if (typedColour == "white") {
                 colour = 'rgb(255, 255, 255)'
             } else if (typedColour == "aqua") {
-                colour = '(0, 255, 255)'
+                colour = 'rgb(0, 255, 255)'
             }
         } else if (inputValue.substring(0, 7) == "village") {
             var minimumHouseSize = Number (inputValue.substring(8))
@@ -204,7 +202,17 @@ function drawCommand() {
         houseSize = 0;
         houseGap = 0;
         totalHouseWidth = 0;
-        }
+        } //else if (inputValue.substring(0, 3) == "rgb") {
+        //     var startRed = 5
+        //     var endRed = inputValue.search(",")
+        //     var red = inputValue.substring(startRed, endRed)
+        //     var redFinished = inputValue.substring(endRed + 1)
+        //     var endGreen = redFinished.search(",")
+        //     var green = inputValue.substring(endRed + 2, endGreen)
+        //     var endBlue = inputValue.length - 1
+        //     var blue = inputValue.substring(endGreen + 2, endBlue)
+        //     colour = 'rgb(red, green, blue)'
+        // }
     }
 }
 

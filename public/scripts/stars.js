@@ -9,11 +9,13 @@ var redTeleporter;
 var gemsCollected = 0;
 var level = 1;
 var fireballs;
+var shield;
 
 var roundWon = false;
 var platforms;
 var cursors;
-var keyW;
+var keyF;
+var keyS;
 var score = 0;
 var scoreText;
 var gameStatusText;
@@ -28,9 +30,15 @@ var trailAllowed = true;
 var bombTrailAllowed = true;
 var numberOfStars = 1;
 var levelText;
-var requiredPointsText;
+var enemyHealthText;
 var changeSpeed = true;
 var randomPlayerSpeed = 0;
+var fireballAllowed = true;
+var shootFireballRight = true;
+var enemyHealth = level*10;
+var shieldOn = false;
+var shieldCanTurnOff = false;
+var shieldCanTurnOn = true;
 
 var enemyDestroyed = false;
 var assasinate = false;
@@ -66,7 +74,8 @@ function preload() {
     this.load.image('bomb', 'images/bomb.png');
     this.load.spritesheet('dude', 'images/dude.png', { frameWidth: 32, frameHeight: 48 });
     this.load.spritesheet('enemy', 'images/invader.png', { frameWidth: 32, frameHeight: 32 });
-    this.load.spritesheet('fireball', 'images/fireball.png');
+    this.load.image('fireball', 'images/fireball.png');
+    this.load.image('shield', 'images/shield.png');
 }
 
 function createScene()
@@ -77,12 +86,12 @@ function createScene()
     platforms = createPlatforms();
 
     cursors = scene.input.keyboard.createCursorKeys();
-    keyW = scene.input.keyboard.addKey('W');  // Get key object
+    keyF = scene.input.keyboard.addKey('F');  // Get key object
+    keyS = scene.input.keyboard.addKey('S');
 
     scene.input.addPointer(1);
-    scoreText = scene.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
-    levelText = scene.add.text(625, 16, 'level: 1', { fontSize: '32px', fill: '#000'});
-    requiredPointsText = scene.add.text(325, 16, score + '/' + level ** 2 * 100, { fontSize: '32px', fill: '#000'})
+    scoreText = scene.add.text(16, 16, 'score: 0/' + level **2 * 100, { fontSize: '25px', fill: '#000' });
+    levelText = scene.add.text(625, 16, 'level: 1', { fontSize: '25px', fill: '#000'});
 
     scene.input.on('pointerdown', function (pointer) {
         if (gameOver) {
@@ -102,6 +111,7 @@ function createSprites() {
     bombs = createBombs(scene);
     gems = createGems(scene);
     fireballs = createFireballs(scene);
+    // shield = createShield(scene);
 
     scene.physics.add.collider(player, platforms);
     scene.physics.add.collider(stars, platforms);
@@ -110,36 +120,64 @@ function createSprites() {
     scene.physics.add.overlap(player, stars, collectStar, null, scene);
     scene.physics.add.collider(player, bombs, hitBomb, null, scene);
     scene.physics.add.overlap(player, gems, powerUp, null, scene);
+    scene.physics.add.collider(fireballs, platforms, fireballHitsWall, null, scene);
 
     if (level >= 3 && roundWon) {
         enemy = createEnemy(scene);
         enemyCollider = scene.physics.add.collider(enemy, platforms);
         scene.physics.add.overlap(player, enemy, playerEnemyFight, null, scene);
+        scene.physics.add.collider(enemy, fireballs, fireballHitsEnemy, null, scene);
+        scene.physics.add.collider(shield, enemy);
     }
-    console.log("level is " + level + " before creating teleporters")
     if (level >= 2 && roundWon) {
         createTeleporter();
-        console.log("creating teleporters")
     }
     scene.physics.resume();
-    console.log("sprites created for level "+level);
+}
+
+function bombBlocked(shield, bomb) {
+    bomb.destroy();
+    shield.destroy(true);
+    shieldOn = false;
+}
+
+function fireballHitsEnemy(enemy, fireball) {
+    if (level >= 3 && enemyDestroyed == false) {
+        enemyHealth -= 5
+        enemyHealthText.setText('enemy health: ' + enemyHealth);
+        if (enemyHealth <= 0) {
+        enemy.destroy()
+        enemyDestroyed = true;
+        }
+    }
+    fireball.destroy();
+}
+
+function fireballHitsWall(fireball, platforms) {
+    fireball.destroy();
 }
 
 function resetScene() {
-    console.log("reset function entered")
     var previousLevel = level-1;
     if (level >= 2 && roundWon == false) {
-        console.log("destorying teleporters!!!!!!!!");
         blueTeleporter.destroy();
         redTeleporter.destroy();
     }
     score=0;
     playerSpeed=160;
-    scoreText.setText('Score: ' + score);
+    scoreText.setText('score: ' + score + '/' + level **2 * 100);
+    if (level >= 3) {
+        enemyHealthText = scene.add.text(300, 16, 'enemy health: ' + level*10, { fontSize: '25px', fill: '#000'});
+    }
+    if (level>=3) {
+        enemyHealthText.setText('enemy health: ' + enemyHealth);
+    }
     gameStatusText.setVisible(false);
     stars.clear(true,true);
     bombs.clear(true,true);
     gems.clear(true,true);
+    fireballs.clear(true, true);
+    shootFireballRight = true;
     if (level >= 3 && roundWon == false || level>=4) {
         enemy.destroy(true);
     }
@@ -147,19 +185,21 @@ function resetScene() {
     gemsCollected = 0;
     playerFrozen = false;
     jumpSpeed = 330;
+    enemyHealth = level*10;
+    shieldCanTurnOn = true;
+    if (level >= 3) {
+        enemyHealthText.setText('enemy health: ' + enemyHealth);
+    }
     if (level >= 4) {
         badGem = Math.round( Math.random()*2 +2 )
     }
 
     numberOfStars = 1;
-    console.log("reset done for level "+previousLevel);
     if (roundWon == false) {
         level = 1;
     }
 
-    requiredPointsText.setText(score + '/' + level ** 2 * 100)
     levelText.setText('level: ' + level);
-    console.log("reset function finished. Level is " + level)
 } 
 
 function assasinationFailed() {
@@ -199,8 +239,7 @@ function powerUp(player, gem) {
     } else {
         score+=20
     }
-    scoreText.setText('Score: ' + score);
-    requiredPointsText.setText(score + '/' + level ** 2 * 100);
+    scoreText.setText('score: ' + score + '/' + level **2 * 100);
     gemsCollected = gemsCollected+1;
 
     if (gemsCollected == badGem && level>=4) {
@@ -211,12 +250,11 @@ function powerUp(player, gem) {
         enemyCollider.destroy();
         setTimeout (resumePlayerSpeed, 2000);
     } else {
-        playerSpeed=playerSpeed*1.15;
-        jumpSpeed=jumpSpeed*1.15;
-        console.log("playerSpeed is " + playerSpeed);
+        playerSpeed=playerSpeed*1.25;
+        jumpSpeed=jumpSpeed*1.25;
     }
     if (gemsCollected >= numberOfGems) {
-        scoreText.setText('Score: ' + score);
+        scoreText.setText('score: ' + score + '/' + level **2 * 100);
             if (score>=level ** 2 *100) {
                 gameStatusText = this.add.text(75, 200, 'congratulations, you win!', { fontSize: '45px', fill: '#000' });
                 gameOver = true;
@@ -224,7 +262,7 @@ function powerUp(player, gem) {
                 roundWon = true;
                 this.physics.pause();
             } else {
-                gameStatusText = this.add.text(150, 200, 'Your a complete failure. Try again.', { fontSize: '25px', fill: '#000' });
+                gameStatusText = this.add.text(150, 200, 'Youre a complete failure. Try again.', { fontSize: '25px', fill: '#000' });
                 gameOver = true;
                 this.physics.pause();
             }
@@ -237,8 +275,7 @@ function powerUp(player, gem) {
 function collectStar(player, star) {
     star.destroy();
     score += 20;
-    scoreText.setText('Score: ' + score);
-    requiredPointsText.setText(score + '/' + level ** 2 * 100)
+    scoreText.setText('score: ' + score + '/' + level **2 * 100);
 
     var x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
 
@@ -282,7 +319,7 @@ function playerEnemyFight(player, enemy) {
     } else {
         enemy.destroy()
         score += 100;
-        scoreText.setText('Score: ' + score);
+        scoreText.setText('score: ' + score + '/' + level **2 * 100);
         enemyDestroyed = true;
     }
 }
@@ -301,6 +338,11 @@ function createStars(parent) {
     });
 
     return stars;
+}
+
+function createShield(parent) {
+    shield = parent.physics.add.sprite(player.x, player.y, 'shield');
+    return shield;
 }
 
 function createGem(parent, x, y) {
@@ -422,7 +464,18 @@ function addBlock(startX, startY, width, height, color) {
 function createTeleporter() {
     blueTeleporter = addBlock(50, 495, 30, 5, 0x3333ff); //blue teleporter
     redTeleporter = addBlock(675, 495, 30, 5, 0xff0000); //red teleporter
-    console.log("createTeleporter function entered")
+}
+
+function allowFireball() {
+    fireballAllowed = true;
+}
+
+function allowShieldToTurnOff() {
+    shieldCanTurnOff = true;
+}
+
+function allowShieldToTurnOn() {
+    shieldCanTurnOn = true;
 }
 
 function update() {
@@ -486,12 +539,18 @@ function update() {
             }
         }
 
-        // if (score >= 40 && level <= 4) {
+        //testing automatic wins
+        // if (score >= 40 && level <= 3) {
         //     gameStatusText = this.add.text(75, 200, 'Wow, you won the test round!', { fontSize: '45px', fill: '#000' });
         //         gameOver = true;
         //         ++level;
         //         roundWon = true;
         // }
+
+        function destroyShield(shield) {
+            var shield;
+            shield.destroy()
+        }
 
         if (level >= 2) {
             if (player.x > 50 && player.x < 80 && player.y < 495 && player.y > 470) { //blue teleporter
@@ -511,26 +570,24 @@ function update() {
 
         function getRandomPlayerSpeed() {
             randomPlayerSpeed = Number (Math.round( Math.random()*100*level + 160   ))
-            console.log("randomPlayerSpeed is " + randomPlayerSpeed);
-            console.log("playerSpeed is " + playerSpeed)
             var nextSpeedChangeTimer = Math.round( Math.random()*250 + 250)
             setTimeout(allowSpeedChange, nextSpeedChangeTimer);
             return randomPlayerSpeed
         }
 
         // Player control based on left/right/jump keys
-        if (cursors.left.isDown ||
+        if (cursors.left.isDown && shieldOn == false ||
             (this.input.pointer1.isDown && this.input.pointer1.x < 400)) {
-                if (level >= 6 && changeSpeed) {
-                    changeSpeed = false
-                    playerSpeed = getRandomPlayerSpeed()
-                    console.log("playerSpeed is " + playerSpeed);
-                    player.setVelocityX(-playerSpeed)
+            if (level >= 6 && changeSpeed) {
+                changeSpeed = false
+                playerSpeed = getRandomPlayerSpeed()
+                player.setVelocityX(-playerSpeed)
             } else {
                 player.setVelocityX(-playerSpeed);
             }
+            shootFireballRight = false;
             player.anims.play('left', true);
-        } else if (cursors.right.isDown ||
+        } else if (cursors.right.isDown && shieldOn == false ||
             (this.input.pointer1.isDown && this.input.pointer1.x > 400)) {
                 if (level >= 6 && changeSpeed) {
                     changeSpeed = false;
@@ -538,32 +595,53 @@ function update() {
                     player.setVelocityX( playerSpeed  )
                 } else {
                     player.setVelocityX(playerSpeed);
-                }            player.anims.play('right', true);
+                }            
+                shootFireballRight = true;
+                player.anims.play('right', true);
         } else {
             player.setVelocityX(0);
             player.anims.play('turn');
         }
 
-        if ((cursors.up.isDown ||
+        if ((cursors.up.isDown && shieldOn == false ||
             (this.input.pointer1.isDown && this.input.pointer1.y < 300))
             && player.body.touching.down) {
             player.setVelocityY(-jumpSpeed);
-        } else if (cursors.down.isDown && !cursors.up.isDown && !cursors.left.isDown && !cursors.right.isDown) {
+        } else if (cursors.down.isDown && !cursors.up.isDown && !cursors.left.isDown && !cursors.right.isDown && shieldOn == false) {
             player.setVelocityY(jumpSpeed)
             player.setTint(0x00ff00);
-            // if (score == 0) {
-            //     blueTeleporter.destroy();
-            //     redTeleporter.destroy();
-            //     console.log("teleporters destroyed")
-            // }
         } else if (assasinate && level >= 3) {
             player.setTint(0xff0000);
         } else if (playerFrozen) {
             player.setTint(0xccff);
         } else player.setTint(0xffffff);
 
-        if (keyW.isDown) {
-            player.setTint(0xff0000);
+        if (keyF.isDown && fireballAllowed) {
+            var fireball = fireballs.create(player.x, player.y + 8, 'fireball');
+            fireball.setBounce(0);
+            fireball.body.setCollideWorldBounds(false);
+            if (shootFireballRight) {
+                fireball.setVelocityX(100);
+            } else {
+                fireball.setVelocityX(-100)
+            }
+            fireball.body.allowGravity = false;
+            fireballAllowed = false;
+            setTimeout (allowFireball, level*100);
+        }
+
+        if (keyS.isDown && shieldOn == false && shieldCanTurnOn) {
+            shield = createShield(scene);
+            shield.body.allowGravity = false;
+            shieldOn = true;
+            scene.physics.add.collider(bombs, shield, bombBlocked, null, scene);
+            setTimeout(allowShieldToTurnOff, 100)
+            shieldCanTurnOn = false;
+        } else if (keyS.isDown && shieldOn && shieldCanTurnOff) {
+            shield.destroy();
+            shieldOn = false;
+            setTimeout(allowShieldToTurnOn, 100)
+            shieldCanTurnOff = false;
         }
     }
 }

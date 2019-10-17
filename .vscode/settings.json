@@ -1,0 +1,10 @@
+{
+    "sshfs.configs": [
+        {
+            "host": "svarb.org",
+            "label": "bmodi @ svarb.org",
+            "name": "bmodi_svarb_org",
+            "root": "/home/bmodi"
+        }
+    ]
+}

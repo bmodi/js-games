@@ -94,6 +94,9 @@ input {
 .card .button {
   align-self: end;
 }
+.card .button:hover {
+  background-color: #B21B00;
+}
 
 
 /* Simple Card styles for prettying */

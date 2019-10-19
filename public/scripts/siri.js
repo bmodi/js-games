@@ -35,6 +35,9 @@ var j;
 var fahrenheitDegrees;
 var celsiusDegrees;
 
+var quotes = ["A stitch in time saves nine", "A bird in the hand is worth two in the bush"];
+var daysInTheMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
 function generateName() {
     var name = "";
     nameCharacters = Math.round(  Math.random()*6 + 1  )
@@ -175,13 +178,15 @@ function getSiriResponse(question) {
     var celsius = question.search("celsius")
     var fahrenheit = question.search("fahrenheit")
     var reverse = question.search("reverse")
+    var quote = question.search("quote");
+    var month = question.search("month");
     var answer = "no"
     ++count;
     var whichgreeting = Math.round(  Math.random()*2  );        
     var greeting = question == "hello" || question == "hi" || question == "hey" || question == "sup" || question == "yo" || question == "salutations" || question == "oi";
     var movieRecommendation = question == "what movie should I watch" || question == "what movie do I watch" || question == "whats a good movie" || question == "whats the best movie" || question == "whats the best movie to watch" || question == "whats a good movie to watch";
     whichMonster = Math.round(  Math.random()*2  )
-    if (sum>=0 || factor>=0 || celsius>=0 || fahrenheit>=0 || reverse>=0) {
+    if (sum>=0 || factor>=0 || celsius>=0 || fahrenheit>=0 || reverse>=0 || quote>=0) {
         aCommandWord = true
     }
     if (whichMonster == 0) {
@@ -297,6 +302,12 @@ function getSiriResponse(question) {
     } else if (celsius >= 0) {
         var degreesC = question.substring(8);
         answer = degreesC + " degrees celsius in fahrenheit is " + findFahrenheit(degreesC);
+    } else if (quote >= 0) {
+        var index = parseInt(question.substring(6))-1;
+        answer = quotes[index];
+    } else if (month >= 0) {
+        var monthNum = parseInt(question.substring(6));
+        answer = "The "+monthNum+"st month has "+daysInTheMonth[monthNum-1]+" days in it.";
     } else if (fahrenheit >= 0) {
         var degreesF =  question.substring(10);
         answer = degreesF + " degrees fahrenheit in celsius is " + findCelsius(degreesF);

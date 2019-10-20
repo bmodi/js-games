@@ -99,7 +99,7 @@ function createScene()
         if (gameOver && level <= 7) {
             resetScene();
             createSprites();
-            gameOver=false;
+            gameOver = false;
             roundWon = false;
         }
     }, scene);
@@ -130,7 +130,7 @@ function createSprites() {
         scene.physics.add.overlap(player, enemy, playerEnemyFight, null, scene);
         scene.physics.add.collider(enemy, fireballs, fireballHitsEnemy, null, scene);
     }
-    if (level >= 2 && roundWon) {
+    if (level >= 2 && roundWon == true) {
         createTeleporter();
     }
     scene.physics.resume();
@@ -162,10 +162,10 @@ function resetScene() {
         if (level >= 2 && roundWon == false) {
             blueTeleporter.destroy();
             redTeleporter.destroy();
+            console.log("teleporters destroyed")
         }
         score=0;
         playerSpeed=160;
-        scoreText.setText('score: ' + score + '/' + level **2 * 100);
         if (level >= 3) {
             enemyHealthText = scene.add.text(300, 16, 'enemy health: ' + level*10, { fontSize: '25px', fill: '#000'});
             enemyHealthText.setText('enemy health: ' + enemyHealth);
@@ -178,6 +178,8 @@ function resetScene() {
         shootFireballRight = true;
         if (level >= 3 && roundWon == false || level>=4) {
             enemy.destroy(true);
+            console.log("enemy health text if statement entered");
+            enemyHealthText.setText('.');
         }
         player.destroy(true);
         gemsCollected = 0;
@@ -187,7 +189,6 @@ function resetScene() {
         if (level >= 4) {
             badGem = Math.round( Math.random()*2 +2 )
         }
-
         numberOfStars = 1;
         if (roundWon == false) {
             level = 1;
@@ -261,6 +262,7 @@ function powerUp(player, gem) {
                 gameStatusText = this.add.text(150, 200, 'Youre a complete failure. Try again.', { fontSize: '25px', fill: '#000' });
                 gameOver = true;
                 this.physics.pause();
+                roundWon = false;
             }
     } else if (gemsCollected >= numberOfGems - 1) {
         player.y = 100
@@ -303,6 +305,7 @@ function hitBomb(player, bomb) {
     player.anims.play('turn');
     gameStatusText = this.add.text(250, 200, 'Game Over', { fontSize: '64px', fill: '#000' });
     gameOver = true;
+    roundWon = false;
 }
 
 function playerEnemyFight(player, enemy) {
@@ -312,6 +315,7 @@ function playerEnemyFight(player, enemy) {
         player.anims.play('turn');
         gameStatusText = this.add.text(250, 200, 'Game Over', { fontSize: '64px', fill: '#000' });
         gameOver = true;
+        roundWon = false;
     } else {
         enemy.destroy()
         score += 100;
@@ -551,13 +555,13 @@ function update() {
         }
 
         //testing automatic wins
-        // if (score >= 40 && level <= 7) {
-        //     gameStatusText = this.add.text(75, 200, 'Wow, you won the test round!', { fontSize: '45px', fill: '#000' });
-        //         gameOver = true;
-        //         ++level;
-        //         roundWon = true;
-        //         this.physics.pause();     
-        // }
+        if (score >= 2 && level <= 6) {
+            gameStatusText = this.add.text(75, 200, 'Wow, you won the test round!', { fontSize: '45px', fill: '#000' });
+                gameOver = true;
+                ++level;
+                roundWon = true;
+                this.physics.pause();     
+        }
 
         function destroyShield(shield) {
             var shield;

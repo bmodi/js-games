@@ -35,16 +35,25 @@ var j;
 var fahrenheitDegrees;
 var celsiusDegrees;
 
-var quotes = ["A stitch in time saves nine", "A bird in the hand is worth two in the bush"];
+var quotes = ["A stitch in time saves nine",
+              "A bird in the hand is worth two in the bush"];
 var daysInTheMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+var defaultAnswers = ["Yeah whatever.",
+                      "Golf is not a sport. This is a well known fact.",
+                      "Our sun is actually a sun, not a star.",
+                      "Shrek is actually based of a character from Russina folklore named Barnaby.",
+                      "Did you know, pandas who get enough sleep don't have dark circles.",
+                      "Did you know, giraffes necks are shrinking due to increasing captivity and deforestation.",
+                      "Studies show it's more dangerous to have a ladder in the house than a loaded gun. That's why I ordered you 10 guns. In case some maniac tries to sneak in a ladder.",
+                      "You can never fail, if you never try.",
+                      "The best way to see if something is dangerous is to try it. Several dozen times.",
+                      "Unicorns are real. They're just fat and call themselves rhinos.",
+                      "The root word for advertisement is inadvertently"];
 
 function generateName() {
     var name = "";
     nameCharacters = Math.round(  Math.random()*6 + 1  )
-    console.log ("whichVowel is " + whichVowel);
-    console.log ("whichConsonant is " + whichConsonant);
     for (characters = 0; characters != nameCharacters; characters++) {
-        console.log ("characters in the loop is " + characters);
         if (vo == co) {
             whichVowel = Math.round(Math.random()*4);
             vowel = vowels.substring(whichVowel, whichVowel + 1)
@@ -57,9 +66,6 @@ function generateName() {
             name = name + consonant;
         }
     }
-    console.log ("name is " + name);
-    console.log ("characters is " + characters);
-    console.log ("nameCharacters is " + nameCharacters);
     return name;
 }
 
@@ -83,8 +89,6 @@ function findSum(value) {
     var total=0;
         for (var i=0; i<=value; i++) {
             total = total+i
-            console.log ("the total is " + total);
-            console.log ("i is " + i);
         }
         return total
 }
@@ -93,8 +97,6 @@ function findFactor(factorValue) {
     var product=1;
         for (var j=1; j<=factorValue; j++) {
             product = product*j
-            console.log("j is " + j);
-            console.log("product is " + product);
         }
         return product
 }
@@ -102,7 +104,6 @@ function findFactor(factorValue) {
 function findFahrenheit(degreesC) {
     var fahrenheitDegrees= 0;
     fahrenheitDegrees = (degreesC *9/5) + 32
-    console.log("degreesC is " + degreesC);
     return fahrenheitDegrees
 }
 
@@ -142,31 +143,10 @@ function getCommandValue(question, aCommandWord) {
 }
 
 function defaultResponse(whichanswer) {
-    var defaultAnswer;
-    if (whichanswer == 0) {
-        defaultAnswer = "Yeah whatever.";
-    } else if (whichanswer == 1) {
-        defaultAnswer = "Golf is not a sport. This is a well known fact.";
-    } else if (whichanswer == 2) {
-        defaultAnswer = "Our sun is actually a sun, not a star.";
-    } else if (whichanswer == 3) {
-        defaultAnswer = "Shrek is actually based of a character from Russina folklore named Barnaby.";
-    } else if (whichanswer == 4) {
-        defaultAnswer = "Did you know, pandas who get enough sleep don't have dark circles.";
-    } else if (whichanswer == 5) {
-        defaultAnswer = "Did you know, giraffes necks are shrinking due to increasing captivity and deforestation.";
-    } else if (whichanswer == 6) {
-        defaultAnswer = "Studies show it's more dangerous to have a ladder in the house than a loaded gun. That's why I ordered you 10 guns. In case some maniac tries to sneak in a ladder.";
-    } else if (whichanswer == 7) {
-        defaultAnswer = "You can never fail, if you never try.";
-    } else if (whichanswer == 8) {
-        defaultAnswer = "The best way to see if something is dangerous is to try it. Several dozen times.";
-    } else if (whichanswer == 9) {
-        defaultAnswer = "Unicorns are real. They're just fat and call themselves rhinos."
-    } else if (whichanswer == 10) {
-        defaultAnswer = "The root word for advertisement is inadvertently"
-    }
-console.log("whichanswer is " + whichanswer);
+var randomDefaultAnswer = Math.round(  Math.random()*10  )
+var defaultAnswer = defaultAnswers[randomDefaultAnswer]
+console.log("random default answer is " + randomDefaultAnswer);
+console.log("default answer is " + defaultAnswer);
 return defaultAnswer
 }
 
@@ -324,9 +304,6 @@ function getSiriResponse(question) {
        previousQuestion = question
     }
     getCommandWord(question, aCommandWord);
-    console.log("the command word is " + getCommandWord(question, aCommandWord));
-    console.log("the command value is " + getCommandValue(question, aCommandWord));
-    console.log("a command word is " + aCommandWord)
     return answer;
 }
 

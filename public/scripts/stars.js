@@ -185,6 +185,9 @@ function resetScene() {
         gemsCollected = 0;
         playerFrozen = false;
         jumpSpeed = 330;
+        shieldCanTurnOff = false;
+        shieldCanTurnOn = true;
+        shieldOn = false;
         enemyHealth = level*10;
         if (level >= 4) {
             badGem = Math.round( Math.random()*2 +2 )
@@ -195,6 +198,8 @@ function resetScene() {
         }
         scoreText.setText('score: ' + score + '/' + level **2 * 100);
         levelText.setText('level: ' + level);
+        console.log("shield on is " + shieldOn);
+        console.log("shield can turn on is " + shieldCanTurnOn);
 } 
 
 function assasinationFailed() {
@@ -555,13 +560,13 @@ function update() {
         }
 
         //testing automatic wins
-        if (score >= 2 && level <= 6) {
-            gameStatusText = this.add.text(75, 200, 'Wow, you won the test round!', { fontSize: '45px', fill: '#000' });
-                gameOver = true;
-                ++level;
-                roundWon = true;
-                this.physics.pause();     
-        }
+        // if (score >= 2 && level <= 6) {
+        //     gameStatusText = this.add.text(75, 200, 'Wow, you won the test round!', { fontSize: '45px', fill: '#000' });
+        //         gameOver = true;
+        //         ++level;
+        //         roundWon = true;
+        //         this.physics.pause();     
+        // }
 
         function destroyShield(shield) {
             var shield;
@@ -592,7 +597,7 @@ function update() {
         }
 
         // Player control based on left/right/jump keys
-        if (cursors.left.isDown && shieldOn == false ||
+        if (cursors.left.isDown && shieldOn == false && playerFrozen == false||
             (this.input.pointer1.isDown && this.input.pointer1.x < 400)) {
             if (level >= 6 && changeSpeed) {
                 changeSpeed = false
@@ -603,7 +608,7 @@ function update() {
             }
             shootFireballRight = false;
             player.anims.play('left', true);
-        } else if (cursors.right.isDown && shieldOn == false ||
+        } else if (cursors.right.isDown && shieldOn == false && playerFrozen == false||
             (this.input.pointer1.isDown && this.input.pointer1.x > 400)) {
                 if (level >= 6 && changeSpeed) {
                     changeSpeed = false;
@@ -619,7 +624,7 @@ function update() {
             player.anims.play('turn');
         }
 
-        if ((cursors.up.isDown && shieldOn == false ||
+        if ((cursors.up.isDown && shieldOn == false && playerFrozen == false||
             (this.input.pointer1.isDown && this.input.pointer1.y < 300))
             && player.body.touching.down) {
             player.setVelocityY(-jumpSpeed);
@@ -647,6 +652,8 @@ function update() {
 
         if (keyS.isDown && shieldOn == false && shieldCanTurnOn && player.body.touching.down) {
             shield = createShield(scene);
+            console.log("shield on is " + shieldOn);
+            console.log("shield can turn on is " + shieldCanTurnOn);
             shield.body.allowGravity = false;
             shieldOn = true;
             scene.physics.add.collider(bombs, shield, bombBlocked, null, scene);

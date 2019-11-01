@@ -85,34 +85,6 @@ function startJoke() {
     return joke
 }
 
-function findSum(value) {
-    var total=0;
-        for (var i=0; i<=value; i++) {
-            total = total+i
-        }
-        return total
-}
-
-function findFactor(factorValue) {
-    var product=1;
-        for (var j=1; j<=factorValue; j++) {
-            product = product*j
-        }
-        return product
-}
-
-function findFahrenheit(degreesC) {
-    var fahrenheitDegrees= 0;
-    fahrenheitDegrees = (degreesC *9/5) + 32
-    return fahrenheitDegrees
-}
-
-function findCelsius(degreesF) {
-    var celsiusDegrees = 0;
-    celsiusDegrees = (degreesF - 32) * 5/9;
-    return celsiusDegrees
-}
-
 function reverseQuestion(reverseString) {
     var reversedQuestion = "";
         for (var k=0; k <= reverseString.length; k++) {

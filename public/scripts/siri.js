@@ -251,6 +251,10 @@ function getSiriResponse(question) {
         } else {
             answer = "FOOL! You were warned.  Now...I CURSE YOU! MAY YOU BURN IN THE DARKEST CORNER OF HELL FOR ALL OF ETERNITY, AND HEAR MY LAUGHS AS THE CROWS FEAST UPON YOUR ROTTING FLESH, AND AS YOUR TORURED SCREAMS OF AGONY FILL THE WORLD UNTIL THE END OF TIME. ALL WILL HEAR YOUR CRIES OF PAIN AND REGRET, EVEN AS YOU DROWN IN THE BLOOD SPILLING FROM YOUR VEINS AND PRAY FOR THE END. THE END WHICH NEVER SHALL ARRIVE NOW THAT YOU DID NOT HEED MY WARNING.";
         }
+    } else if (question == "is 20 modified pushups a workout") {
+        answer = "no";
+    } else if (question == "how many modified pushups is a workout") {
+        answer = "300"
     } else if (celsius >= 0) {
         var degreesC = question.substring(8);
         answer = degreesC + " degrees celsius in fahrenheit is " + findFahrenheit(degreesC);

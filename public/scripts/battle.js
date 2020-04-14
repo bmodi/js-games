@@ -1,12 +1,15 @@
 // Game sprites
 var player;
+var player2
 var level = 1;
 var levelText;
 
 var platforms;
 var cursors;
-var keyF;
+var keyA;
+var keyW;
 var keyS;
+var keyD;
 var score = 0;
 var scoreText;
 var gameStatusText;
@@ -15,6 +18,9 @@ var scene;
 
 var playerSpeed=160;
 var jumpSpeed = 330;
+
+var player2Speed = 160;
+var player2JumpSpeed = 330;
 
 var config = {
     type: Phaser.AUTO,
@@ -56,20 +62,14 @@ function createScene()
     platforms = createPlatforms();
 
     cursors = scene.input.keyboard.createCursorKeys();
-    keyF = scene.input.keyboard.addKey('F');  // Get key object
+    keyW = scene.input.keyboard.addKey('W');  // Get key object
+    keyA = scene.input.keyboard.addKey('A');
     keyS = scene.input.keyboard.addKey('S');
+    keyD = scene.input.keyboard.addKey('D');
 
     scene.input.addPointer(1);
-    scoreText = scene.add.text(16, 16, 'score: 0/' + level **2 * 100, { fontSize: '25px', fill: '#000' });
-    levelText = scene.add.text(625, 16, 'level: 1', { fontSize: '25px', fill: '#000'});
 
     scene.input.on('pointerdown', function (pointer) {
-        if (gameOver && level <= 7) {
-            resetScene();
-            createSprites();
-            gameOver = false;
-            roundWon = false;
-        }
     }, scene);
 
     createSprites();
@@ -80,44 +80,26 @@ function createSprites() {
 
     scene.physics.add.collider(player, platforms);
 
+    
+    player2 = createPlayer2(scene);
+        
+    scene.physics.add.collider(player2, platforms);
+
     scene.physics.resume();
 }
 
 function resetScene() {
-        score=0;
         playerSpeed=160;
-        gameStatusText.setVisible(false);
         player.destroy(true);
-        scoreText.setText('score: ' + score + '/' + level **2 * 100);
+
+        player2Speed=160;
+        player2.destroy(true);
+
+        gameStatusText.setVisible(false);
 } 
 
-function resumePlayerSpeed() {
-    playerSpeed = 160*1.15*badGem;
-    jumpSpeed = 330*1.15*badGem;
-    playerFrozen = false;
-    assasinate = true;
-
-    if (level >= 3) {
-        enemyWallPhase = false;
-        scene.physics.add.collider(enemy, platforms);
-            if (enemy.x > 300 && enemy.x < 400 && enemy.y > 51 && enemy.y < 226) {
-                enemy.y = 325;
-                    if (player.x < 400) {
-                        enemy.x = 650
-                    } else {
-                        enemy.x = 100
-                    }
-            }
-    }
-
-    setTimeout (assasinationFailed, 3000)
-
-    return playerSpeed
-}
-
-
-
 function createPlayer(parent) {
+    // 100,450 is the starting position
     var player = parent.physics.add.sprite(100, 450, 'dude');
     player.setBounce(0.2);
     player.setCollideWorldBounds(true);
@@ -139,6 +121,30 @@ function createPlayer(parent) {
         repeat: -1
     });
     return player;
+}
+
+function createPlayer2(parent) {
+    var player2 = parent.physics.add.sprite(500, 450, 'dude');
+    player2.setBounce(0.2);
+    player2.setCollideWorldBounds(true);
+    parent.anims.create({
+        key: 'left',
+        frames: parent.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+        frameRate: 10,
+        repeat: -1
+    });
+    parent.anims.create({
+        key: 'turn',
+        frames: [{ key: 'dude', frame: 4 }],
+        frameRate: 20
+    });
+    parent.anims.create({
+        key: 'right',
+        frames: parent.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+        frameRate: 10,
+        repeat: -1
+    });
+    return player2;
 }
 
 function createPlatforms() {
@@ -190,5 +196,24 @@ function update() {
         } else if (cursors.down.isDown && !cursors.up.isDown && !cursors.left.isDown && !cursors.right.isDown) {
             player.setVelocityY(jumpSpeed)
         }
+
+        // Player2 control based on W/A/S/D keys
+        if (keyA.isDown) {
+            player2.setVelocityX(-player2Speed);
+            player2.anims.play('left', true);
+        } else if (keyD.isDown) {
+            player2.setVelocityX(player2Speed);
+            player2.anims.play('right', true);
+        } else {
+            player2.setVelocityX(0);
+            player2.anims.play('turn');
+        }
+
+        if (keyW.isDown && player2.body.touching.down) {
+            player2.setVelocityY(-jumpSpeed);
+        } else if (keyS.isDown && !keyW.isDown && !keyA.isDown && !keyD.isDown) {
+            player2.setVelocityY(jumpSpeed)
+        }
+
     }
 }

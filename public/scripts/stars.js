@@ -96,7 +96,7 @@ function createScene()
     levelText = scene.add.text(625, 16, 'level: 1', { fontSize: '25px', fill: '#000'});
 
     scene.input.on('pointerdown', function (pointer) {
-        if (gameOver && level <= 7) {
+        if (gameOver && level <= 7 && roundWon == true) {
             resetScene();
             createSprites();
             gameOver = false;
@@ -574,12 +574,12 @@ function update() {
         }
 
         if (level >= 2) {
-            if (player.x > 50 && player.x < 80 && player.y < 495 && player.y > 470) { //blue teleporter
+            if (player.x > 20 && player.x < 100 && player.y < 525 && player.y > 470) { //blue teleporter
                 player.y = 225;
                 player.x = 780;
             }
 
-            if (player.x > 675 && player.x < 705 && player.y < 495 && player.y > 470) { //red teleporter
+            if (player.x > 675 && player.x < 705 && player.y < 525 && player.y > 470) { //red teleporter
                 player.y = 290;
                 player.x = 225;
             }

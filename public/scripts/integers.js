@@ -1,3 +1,17 @@
+class Point {
+
+    constructor(x, y, r, theta) {
+      this.x = x;
+      this.y = y;
+      this.r = r;
+      this.theta = theta;
+    }
+  
+    endPoint() {
+        return new Point(this.x+this.r*Math.cos(this.theta), this.y+this.r*Math.sin(this.theta));
+    }
+  }
+
 class Example extends Phaser.Scene
 {
 
@@ -6,7 +20,7 @@ class Example extends Phaser.Scene
         super();
         this.i = 0;
         this.text = [];
-        this.ANGLE = 360.0/7.0;
+        this.ANGLE=30.0 * Math.PI/180;
         this.CANVAS_WIDTH=1000;
         this.CANVAS_HEIGHT=700;
     }
@@ -15,13 +29,14 @@ class Example extends Phaser.Scene
     {
         var gameObjects = [];
         
+        var canvasX=this.CANVAS_WIDTH/2;
+        var canvasY=this.CANVAS_HEIGHT/2
         for (let i = 0; i < 7; i++) {
-            gameObjects[i] = this.add.circle(this.CANVAS_WIDTH/2, this.CANVAS_HEIGHT/2, 125);
+            var c = new Point(canvasX, canvasY, 125, i*this.ANGLE);
+            var e = c.endPoint();
+            gameObjects[i] = this.add.circle(e.x, e.y, 125);
             gameObjects[i].setStrokeStyle(2, 0x1a65ac);
         }
-
-        var circle = new Phaser.Geom.Circle(this.CANVAS_WIDTH/2, this.CANVAS_HEIGHT/2, 200);
-        Phaser.Actions.PlaceOnCircle(gameObjects, circle, 0, 270.15);
         
         for (let i = 0; i < 5; i++) {
             var number = Math.floor(Math.random() * 100)+1;

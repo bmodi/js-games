@@ -21,7 +21,7 @@ class Example extends Phaser.Scene
         }
 
         var circle = new Phaser.Geom.Circle(this.CANVAS_WIDTH/2, this.CANVAS_HEIGHT/2, 200);
-        Phaser.Actions.PlaceOnCircle(gameObjects, circle, 0, 270);
+        Phaser.Actions.PlaceOnCircle(gameObjects, circle, 0, 270.15);
         
         for (let i = 0; i < 5; i++) {
             var number = Math.floor(Math.random() * 100)+1;

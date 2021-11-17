@@ -14,13 +14,15 @@ class Point {
 
 class Example extends Phaser.Scene
 {
-
     constructor ()
     {
         super();
         this.i = 0;
         this.text = [];
-        this.ANGLE=30.0 * Math.PI/180;
+        this.NUM_CIRCLES=7;
+        this.CIRCLE_RADIUS=125;
+        this.DISTRIBUTION_RADIUS=200;
+        this.ANGLE=360.0/this.NUM_CIRCLES * Math.PI/180;
         this.CANVAS_WIDTH=1000;
         this.CANVAS_HEIGHT=700;
     }
@@ -31,10 +33,10 @@ class Example extends Phaser.Scene
         
         var canvasX=this.CANVAS_WIDTH/2;
         var canvasY=this.CANVAS_HEIGHT/2
-        for (let i = 0; i < 7; i++) {
-            var c = new Point(canvasX, canvasY, 125, i*this.ANGLE);
+        for (let i = 0; i < this.NUM_CIRCLES; i++) {
+            var c = new Point(canvasX, canvasY, this.DISTRIBUTION_RADIUS, i*this.ANGLE);
             var e = c.endPoint();
-            gameObjects[i] = this.add.circle(e.x, e.y, 125);
+            gameObjects[i] = this.add.circle(e.x, e.y, this.CIRCLE_RADIUS);
             gameObjects[i].setStrokeStyle(2, 0x1a65ac);
         }
         

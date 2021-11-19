@@ -41,9 +41,11 @@ class Example extends Phaser.Scene
             circles[i].setStrokeStyle(2, 0x1a65ac);
         }
         
-        for (let i = 0; i < 5; i++) {
-            var number = Math.floor(Math.random() * 100)+1;
-            this.text[i] = this.add.text(16, 16+40*i, number, { fontSize: FONT_HEIGHT+'px' });
+        var numbers = getNumberSet(this.NUM_CIRCLES, -10, 10);
+
+        for (let i = 0; i < this.NUM_CIRCLES*2; i++) {
+            var e = (new PolarPoint(canvasX, canvasY, this.DISTRIBUTION_RADIUS, i*this.ANGLE/2+this.ANGLE/2)).endPoint();
+            this.text[i] = this.add.text(e.x, e.y, numbers[i], { fontSize: FONT_HEIGHT+'px' }).setOrigin(0.5);
 
             this.text[i].setInteractive();
 
@@ -56,6 +58,64 @@ class Example extends Phaser.Scene
         }
     }
 }
+
+function getNumberSet(numberOfCircles, minNumber, maxNumber) {
+    while (true) { // Will break loop when list with no repeats is made
+        let numbersInRange = initializeNumbersInRange(minNumber, maxNumber);
+        let addends = getAddendsFromNumbersInRange(numbersInRange, numberOfCircles);
+        let sums = getSumsFromAddends(addends, numberOfCircles);
+        var finalList = combineAddendsAndSums(addends, sums, numberOfCircles);
+        if (hasNoRepeats(finalList)) {
+            break;
+        }
+    }
+    return finalList;
+}
+
+function initializeNumbersInRange(minNumber, maxNumber) {
+    let numbersInRange = [];
+    for (let i = minNumber; i <= maxNumber; i++) {
+        numbersInRange.push(i);
+    }
+    return numbersInRange;
+}
+
+function getAddendsFromNumbersInRange(numbersInRange, numberOfCircles) {
+    let addends = [];
+    for (let i = 0; i < numberOfCircles; i++) {
+        let index = Math.floor(Math.random() * numbersInRange.length);
+        addends.push(numbersInRange[index]);
+        numbersInRange.splice(index, 1);
+    }
+    return addends;
+}
+
+function getSumsFromAddends(addends, numberOfCircles) {
+    let sums = [];
+    for (let i = 0; i < numberOfCircles-1; i++) {
+        sums.push((addends[i] + addends[i+1])*-1);
+    }
+    sums.push((addends[0] + addends[addends.length-1])*-1); // Takes care of wraparound
+    return sums;
+}
+
+function combineAddendsAndSums(addends, sums, numberOfCircles) {
+    let finalList = [];
+    for (let i = 0; i < numberOfCircles; i++) {
+        finalList.push(addends[i]);
+        finalList.push(sums[i]);
+    }
+    return finalList;
+}
+
+function hasNoRepeats(finalList) {
+    if (new Set(finalList).size == finalList.length) {
+        return true;
+    }
+    return false;
+}
+
+
 
 const config = {
     type: Phaser.WEBGL,

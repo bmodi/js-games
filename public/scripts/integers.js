@@ -1,6 +1,15 @@
 const CANVAS_WIDTH=1000;
 const CANVAS_HEIGHT=800;
+const SIDEBOARD_EDGE=100;
+const SIDEBOARD_TOP=50;
+const SIDEBOARD_SPACING=50;
 const FONT_HEIGHT=30;
+const NUM_CIRCLES=7;
+const CIRCLE_RADIUS=130;
+const DISTRIBUTION_RADIUS=200;
+const ANGLE=360.0/NUM_CIRCLES * Math.PI/180;
+const NUM_TO_LEAVE=5;
+
 
 class PolarPoint {
 
@@ -23,10 +32,6 @@ class Example extends Phaser.Scene
         super();
         this.i = 0;
         this.text = [];
-        this.NUM_CIRCLES=7;
-        this.CIRCLE_RADIUS=130;
-        this.DISTRIBUTION_RADIUS=200;
-        this.ANGLE=360.0/this.NUM_CIRCLES * Math.PI/180;
     }
 
     create ()
@@ -35,26 +40,40 @@ class Example extends Phaser.Scene
         
         var canvasX=CANVAS_WIDTH/2;
         var canvasY=CANVAS_HEIGHT/2
-        for (let i = 0; i < this.NUM_CIRCLES; i++) {
-            var e = (new PolarPoint(canvasX, canvasY, this.DISTRIBUTION_RADIUS, i*this.ANGLE)).endPoint();
-            circles[i] = this.add.circle(e.x, e.y, this.CIRCLE_RADIUS);
+        for (let i = 0; i < NUM_CIRCLES; i++) {
+            var e = (new PolarPoint(canvasX, canvasY, DISTRIBUTION_RADIUS, i*ANGLE)).endPoint();
+            circles[i] = this.add.circle(e.x, e.y, CIRCLE_RADIUS);
             circles[i].setStrokeStyle(2, 0x1a65ac);
         }
         
-        var numbers = getNumberSet(this.NUM_CIRCLES, -10, 10);
+        var numbers = getNumberSet(NUM_CIRCLES, -10, 10);
 
-        for (let i = 0; i < this.NUM_CIRCLES*2; i++) {
-            var e = (new PolarPoint(canvasX, canvasY, this.DISTRIBUTION_RADIUS, i*this.ANGLE/2+this.ANGLE/2)).endPoint();
-            this.text[i] = this.add.text(e.x, e.y, numbers[i], { fontSize: FONT_HEIGHT+'px' }).setOrigin(0.5);
+        var leave_out=[1, 3, 7, 8, 11];
+        var sideboard_order=[1,2,3,4,5,6,7,8,9];
+        var random_sideboard_order = sideboard_order.map((value) => ({ value, sort: Math.random() }))
+            .sort((a, b) => a.sort - b.sort)
+            .map(({ value }) => value);
 
-            this.text[i].setInteractive();
+        var sideboard_count=0;
 
-            this.input.setDraggable(this.text[i]);
-        
-            this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
-                gameObject.x = dragX;
-                gameObject.y = dragY;
-            });
+        for (let i = 0; i < NUM_CIRCLES*2; i++) {
+            if ( leave_out.includes(i) ) {
+                var e = (new PolarPoint(canvasX, canvasY, DISTRIBUTION_RADIUS, i*ANGLE/2+ANGLE/2)).endPoint();
+                this.text[i] = this.add.text(e.x, e.y, numbers[i], { fontSize: FONT_HEIGHT+'px', fill: "#ff0000" }).setOrigin(0.5);
+            } else {
+                var x = CANVAS_WIDTH-SIDEBOARD_EDGE;
+                var y = SIDEBOARD_TOP+sideboard_order[sideboard_count++]*SIDEBOARD_SPACING;
+                this.text[i] = this.add.text(x, y, numbers[i], { fontSize: FONT_HEIGHT+'px', fill: "#00ffff" }).setOrigin(0.5);
+
+                this.text[i].setInteractive();
+
+                this.input.setDraggable(this.text[i]);
+            
+                this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
+                    gameObject.x = dragX;
+                    gameObject.y = dragY;
+                });
+            }
         }
     }
 }

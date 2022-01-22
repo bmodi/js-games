@@ -35,13 +35,25 @@ var j;
 var fahrenheitDegrees;
 var celsiusDegrees;
 
+var quotes = ["A stitch in time saves nine",
+              "A bird in the hand is worth two in the bush"];
+var daysInTheMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+var defaultAnswers = ["Yeah whatever.",
+                      "Golf is not a sport. This is a well known fact.",
+                      "Our sun is actually a sun, not a star.",
+                      "Shrek is actually based of a character from Russina folklore named Barnaby.",
+                      "Did you know, pandas who get enough sleep don't have dark circles.",
+                      "Did you know, giraffes necks are shrinking due to increasing captivity and deforestation.",
+                      "Studies show it's more dangerous to have a ladder in the house than a loaded gun. That's why I ordered you 10 guns. In case some maniac tries to sneak in a ladder.",
+                      "You can never fail, if you never try.",
+                      "The best way to see if something is dangerous is to try it. Several dozen times.",
+                      "Unicorns are real. They're just fat and call themselves rhinos.",
+                      "The root word for advertisement is inadvertently"];
+
 function generateName() {
     var name = "";
     nameCharacters = Math.round(  Math.random()*6 + 1  )
-    console.log ("whichVowel is " + whichVowel);
-    console.log ("whichConsonant is " + whichConsonant);
     for (characters = 0; characters != nameCharacters; characters++) {
-        console.log ("characters in the loop is " + characters);
         if (vo == co) {
             whichVowel = Math.round(Math.random()*4);
             vowel = vowels.substring(whichVowel, whichVowel + 1)
@@ -54,9 +66,6 @@ function generateName() {
             name = name + consonant;
         }
     }
-    console.log ("name is " + name);
-    console.log ("characters is " + characters);
-    console.log ("nameCharacters is " + nameCharacters);
     return name;
 }
 
@@ -74,39 +83,6 @@ function startJoke() {
             joke = "What do you get when you cross a " + monster + " with a snowman?"
         }
     return joke
-}
-
-function findSum(value) {
-    var total=0;
-        for (var i=0; i<=value; i++) {
-            total = total+i
-            console.log ("the total is " + total);
-            console.log ("i is " + i);
-        }
-        return total
-}
-
-function findFactor(factorValue) {
-    var product=1;
-        for (var j=1; j<=factorValue; j++) {
-            product = product*j
-            console.log("j is " + j);
-            console.log("product is " + product);
-        }
-        return product
-}
-
-function findFahrenheit(degreesC) {
-    var fahrenheitDegrees= 0;
-    fahrenheitDegrees = (degreesC *9/5) + 32
-    console.log("degreesC is " + degreesC);
-    return fahrenheitDegrees
-}
-
-function findCelsius(degreesF) {
-    var celsiusDegrees = 0;
-    celsiusDegrees = (degreesF - 32) * 5/9;
-    return celsiusDegrees
 }
 
 function reverseQuestion(reverseString) {
@@ -139,31 +115,10 @@ function getCommandValue(question, aCommandWord) {
 }
 
 function defaultResponse(whichanswer) {
-    var defaultAnswer;
-    if (whichanswer == 0) {
-        defaultAnswer = "Yeah whatever.";
-    } else if (whichanswer == 1) {
-        defaultAnswer = "Golf is not a sport. This is a well known fact.";
-    } else if (whichanswer == 2) {
-        defaultAnswer = "Our sun is actually a sun, not a star.";
-    } else if (whichanswer == 3) {
-        defaultAnswer = "Shrek is actually based of a character from Russina folklore named Barnaby.";
-    } else if (whichanswer == 4) {
-        defaultAnswer = "Did you know, pandas who get enough sleep don't have dark circles.";
-    } else if (whichanswer == 5) {
-        defaultAnswer = "Did you know, giraffes necks are shrinking due to increasing captivity and deforestation.";
-    } else if (whichanswer == 6) {
-        defaultAnswer = "Studies show it's more dangerous to have a ladder in the house than a loaded gun. That's why I ordered you 10 guns. In case some maniac tries to sneak in a ladder.";
-    } else if (whichanswer == 7) {
-        defaultAnswer = "You can never fail, if you never try.";
-    } else if (whichanswer == 8) {
-        defaultAnswer = "The best way to see if something is dangerous is to try it. Several dozen times.";
-    } else if (whichanswer == 9) {
-        defaultAnswer = "Unicorns are real. They're just fat and call themselves rhinos."
-    } else if (whichanswer == 10) {
-        defaultAnswer = "The root word for advertisement is inadvertently"
-    }
-console.log("whichanswer is " + whichanswer);
+var randomDefaultAnswer = Math.round(  Math.random()*10  )
+var defaultAnswer = defaultAnswers[randomDefaultAnswer]
+console.log("random default answer is " + randomDefaultAnswer);
+console.log("default answer is " + defaultAnswer);
 return defaultAnswer
 }
 
@@ -175,13 +130,15 @@ function getSiriResponse(question) {
     var celsius = question.search("celsius")
     var fahrenheit = question.search("fahrenheit")
     var reverse = question.search("reverse")
+    var quote = question.search("quote");
+    var month = question.search("month");
     var answer = "no"
     ++count;
     var whichgreeting = Math.round(  Math.random()*2  );        
     var greeting = question == "hello" || question == "hi" || question == "hey" || question == "sup" || question == "yo" || question == "salutations" || question == "oi";
     var movieRecommendation = question == "what movie should I watch" || question == "what movie do I watch" || question == "whats a good movie" || question == "whats the best movie" || question == "whats the best movie to watch" || question == "whats a good movie to watch";
     whichMonster = Math.round(  Math.random()*2  )
-    if (sum>=0 || factor>=0 || celsius>=0 || fahrenheit>=0 || reverse>=0) {
+    if (sum>=0 || factor>=0 || celsius>=0 || fahrenheit>=0 || reverse>=0 || quote>=0) {
         aCommandWord = true
     }
     if (whichMonster == 0) {
@@ -294,9 +251,19 @@ function getSiriResponse(question) {
         } else {
             answer = "FOOL! You were warned.  Now...I CURSE YOU! MAY YOU BURN IN THE DARKEST CORNER OF HELL FOR ALL OF ETERNITY, AND HEAR MY LAUGHS AS THE CROWS FEAST UPON YOUR ROTTING FLESH, AND AS YOUR TORURED SCREAMS OF AGONY FILL THE WORLD UNTIL THE END OF TIME. ALL WILL HEAR YOUR CRIES OF PAIN AND REGRET, EVEN AS YOU DROWN IN THE BLOOD SPILLING FROM YOUR VEINS AND PRAY FOR THE END. THE END WHICH NEVER SHALL ARRIVE NOW THAT YOU DID NOT HEED MY WARNING.";
         }
+    } else if (question == "is 20 modified pushups a workout") {
+        answer = "no";
+    } else if (question == "how many modified pushups is a workout") {
+        answer = "300"
     } else if (celsius >= 0) {
         var degreesC = question.substring(8);
         answer = degreesC + " degrees celsius in fahrenheit is " + findFahrenheit(degreesC);
+    } else if (quote >= 0) {
+        var index = parseInt(question.substring(6))-1;
+        answer = quotes[index];
+    } else if (month >= 0) {
+        var monthNum = parseInt(question.substring(6));
+        answer = "The "+monthNum+"st month has "+daysInTheMonth[monthNum-1]+" days in it.";
     } else if (fahrenheit >= 0) {
         var degreesF =  question.substring(10);
         answer = degreesF + " degrees fahrenheit in celsius is " + findCelsius(degreesF);
@@ -313,9 +280,6 @@ function getSiriResponse(question) {
        previousQuestion = question
     }
     getCommandWord(question, aCommandWord);
-    console.log("the command word is " + getCommandWord(question, aCommandWord));
-    console.log("the command value is " + getCommandValue(question, aCommandWord));
-    console.log("a command word is " + aCommandWord)
     return answer;
 }
 

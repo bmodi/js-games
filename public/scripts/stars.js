@@ -96,10 +96,10 @@ function createScene()
     levelText = scene.add.text(625, 16, 'level: 1', { fontSize: '25px', fill: '#000'});
 
     scene.input.on('pointerdown', function (pointer) {
-        if (gameOver && level <= 7) {
+        if (gameOver && level <= 7 && roundWon == true) {
             resetScene();
             createSprites();
-            gameOver=false;
+            gameOver = false;
             roundWon = false;
         }
     }, scene);
@@ -130,7 +130,7 @@ function createSprites() {
         scene.physics.add.overlap(player, enemy, playerEnemyFight, null, scene);
         scene.physics.add.collider(enemy, fireballs, fireballHitsEnemy, null, scene);
     }
-    if (level >= 2 && roundWon) {
+    if (level >= 2 && roundWon == true) {
         createTeleporter();
     }
     scene.physics.resume();
@@ -162,10 +162,10 @@ function resetScene() {
         if (level >= 2 && roundWon == false) {
             blueTeleporter.destroy();
             redTeleporter.destroy();
+            console.log("teleporters destroyed")
         }
         score=0;
         playerSpeed=160;
-        scoreText.setText('score: ' + score + '/' + level **2 * 100);
         if (level >= 3) {
             enemyHealthText = scene.add.text(300, 16, 'enemy health: ' + level*10, { fontSize: '25px', fill: '#000'});
             enemyHealthText.setText('enemy health: ' + enemyHealth);
@@ -178,22 +178,28 @@ function resetScene() {
         shootFireballRight = true;
         if (level >= 3 && roundWon == false || level>=4) {
             enemy.destroy(true);
+            console.log("enemy health text if statement entered");
+            enemyHealthText.setText('.');
         }
         player.destroy(true);
         gemsCollected = 0;
         playerFrozen = false;
         jumpSpeed = 330;
+        shieldCanTurnOff = false;
+        shieldCanTurnOn = true;
+        shieldOn = false;
         enemyHealth = level*10;
         if (level >= 4) {
             badGem = Math.round( Math.random()*2 +2 )
         }
-
         numberOfStars = 1;
         if (roundWon == false) {
             level = 1;
         }
         scoreText.setText('score: ' + score + '/' + level **2 * 100);
         levelText.setText('level: ' + level);
+        console.log("shield on is " + shieldOn);
+        console.log("shield can turn on is " + shieldCanTurnOn);
 } 
 
 function assasinationFailed() {
@@ -261,6 +267,7 @@ function powerUp(player, gem) {
                 gameStatusText = this.add.text(150, 200, 'Youre a complete failure. Try again.', { fontSize: '25px', fill: '#000' });
                 gameOver = true;
                 this.physics.pause();
+                roundWon = false;
             }
     } else if (gemsCollected >= numberOfGems - 1) {
         player.y = 100
@@ -303,6 +310,7 @@ function hitBomb(player, bomb) {
     player.anims.play('turn');
     gameStatusText = this.add.text(250, 200, 'Game Over', { fontSize: '64px', fill: '#000' });
     gameOver = true;
+    roundWon = false;
 }
 
 function playerEnemyFight(player, enemy) {
@@ -312,6 +320,7 @@ function playerEnemyFight(player, enemy) {
         player.anims.play('turn');
         gameStatusText = this.add.text(250, 200, 'Game Over', { fontSize: '64px', fill: '#000' });
         gameOver = true;
+        roundWon = false;
     } else {
         enemy.destroy()
         score += 100;
@@ -551,7 +560,7 @@ function update() {
         }
 
         //testing automatic wins
-        // if (score >= 40 && level <= 7) {
+        // if (score >= 2 && level <= 6) {
         //     gameStatusText = this.add.text(75, 200, 'Wow, you won the test round!', { fontSize: '45px', fill: '#000' });
         //         gameOver = true;
         //         ++level;
@@ -565,12 +574,12 @@ function update() {
         }
 
         if (level >= 2) {
-            if (player.x > 50 && player.x < 80 && player.y < 495 && player.y > 470) { //blue teleporter
+            if (player.x > 20 && player.x < 100 && player.y < 525 && player.y > 470) { //blue teleporter
                 player.y = 225;
                 player.x = 780;
             }
 
-            if (player.x > 675 && player.x < 705 && player.y < 495 && player.y > 470) { //red teleporter
+            if (player.x > 675 && player.x < 705 && player.y < 525 && player.y > 470) { //red teleporter
                 player.y = 290;
                 player.x = 225;
             }
@@ -588,7 +597,7 @@ function update() {
         }
 
         // Player control based on left/right/jump keys
-        if (cursors.left.isDown && shieldOn == false ||
+        if (cursors.left.isDown && shieldOn == false && playerFrozen == false||
             (this.input.pointer1.isDown && this.input.pointer1.x < 400)) {
             if (level >= 6 && changeSpeed) {
                 changeSpeed = false
@@ -599,7 +608,7 @@ function update() {
             }
             shootFireballRight = false;
             player.anims.play('left', true);
-        } else if (cursors.right.isDown && shieldOn == false ||
+        } else if (cursors.right.isDown && shieldOn == false && playerFrozen == false||
             (this.input.pointer1.isDown && this.input.pointer1.x > 400)) {
                 if (level >= 6 && changeSpeed) {
                     changeSpeed = false;
@@ -615,7 +624,7 @@ function update() {
             player.anims.play('turn');
         }
 
-        if ((cursors.up.isDown && shieldOn == false ||
+        if ((cursors.up.isDown && shieldOn == false && playerFrozen == false||
             (this.input.pointer1.isDown && this.input.pointer1.y < 300))
             && player.body.touching.down) {
             player.setVelocityY(-jumpSpeed);
@@ -643,6 +652,8 @@ function update() {
 
         if (keyS.isDown && shieldOn == false && shieldCanTurnOn && player.body.touching.down) {
             shield = createShield(scene);
+            console.log("shield on is " + shieldOn);
+            console.log("shield can turn on is " + shieldCanTurnOn);
             shield.body.allowGravity = false;
             shieldOn = true;
             scene.physics.add.collider(bombs, shield, bombBlocked, null, scene);

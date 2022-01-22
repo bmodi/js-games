@@ -56,26 +56,46 @@ class Example extends Phaser.Scene
 
         var sideboard_count=0;
 
+        // Create all game text elements
         for (let i = 0; i < NUM_CIRCLES*2; i++) {
             if ( leave_out.includes(i) ) {
+                // Place this text element in a circle
                 var e = (new PolarPoint(canvasX, canvasY, DISTRIBUTION_RADIUS, i*ANGLE/2+ANGLE/2)).endPoint();
                 this.text[i] = this.add.text(e.x, e.y, numbers[i], { fontSize: FONT_HEIGHT+'px', fill: "#ff0000" }).setOrigin(0.5);
             } else {
+                // Put this text element on the side
                 var x = CANVAS_WIDTH-SIDEBOARD_EDGE;
                 var y = SIDEBOARD_TOP+sideboard_order[sideboard_count++]*SIDEBOARD_SPACING;
                 this.text[i] = this.add.text(x, y, numbers[i], { fontSize: FONT_HEIGHT+'px', fill: "#00ffff" }).setOrigin(0.5);
 
+                // Text elements on the side are draggable
                 this.text[i].setInteractive();
-
                 this.input.setDraggable(this.text[i]);
-            
-                this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
-                    gameObject.x = dragX;
-                    gameObject.y = dragY;
-                });
             }
         }
+
+        // Set event handlers
+        this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
+            gameObject.x = dragX;
+            gameObject.y = dragY;
+            
+            for(let i=0; i < NUM_CIRCLES; i++) {
+                if (Phaser.Math.Distance.Between(circles[i].x, circles[i].y, dragX, dragY) < circles[i].radius) {
+                    circles[i].setStrokeStyle(5, 0xff65ac);
+                } else {
+                    circles[i].setStrokeStyle(2, 0x1a65ac);
+                }
+            }
+        });
+
+        this.input.on('pointerup', function (pointer) {
+            console.log('mouseUp');    
+        }, this);
     }
+}
+
+function onUp() {
+    console.log("Mouse up");
 }
 
 function getNumberSet(numberOfCircles, minNumber, maxNumber) {

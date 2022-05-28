@@ -76,24 +76,7 @@ class IntegerGame extends Phaser.Scene
         }
 
         // Set event handlers
-        this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
-            gameObject.x = dragX;
-            gameObject.y = dragY;
-
-            for(let i=0; i < NUM_CIRCLES; i++) {
-                if (Phaser.Math.Distance.Between(gameObject.scene.circles[i].x, gameObject.scene.circles[i].y, dragX, dragY) < gameObject.scene.circles[i].radius) {
-                    // Number is inside this circle
-                    gameObject.scene.circles[i].setStrokeStyle(5, 0xff65ac);
-                    gameObject.scene.circles[i].numbersInside.add(gameObject.value);
-                    console.log([...gameObject.scene.circles[i].numbersInside])
-                } else {
-                    // Clear other circles
-                    gameObject.scene.circles[i].numbersInside.delete(gameObject.value);
-                    gameObject.scene.circles[i].setStrokeStyle(2, 0x1a65ac);
-                }
-            }
-        });
-
+        this.input.on('drag', this.drag);
         this.input.on('pointerup', this.mouseUp);
     }
 
@@ -103,6 +86,25 @@ class IntegerGame extends Phaser.Scene
             this.scene.circles[i].setStrokeStyle(2, 0x1a65ac);
         }
     }
+
+    drag(pointer, gameObject, dragX, dragY) {
+        gameObject.x = dragX;
+        gameObject.y = dragY;
+
+        for(let i=0; i < NUM_CIRCLES; i++) {
+            if (Phaser.Math.Distance.Between(gameObject.scene.circles[i].x, gameObject.scene.circles[i].y, dragX, dragY) < gameObject.scene.circles[i].radius) {
+                // Number is inside this circle
+                gameObject.scene.circles[i].setStrokeStyle(5, 0xff65ac);
+                gameObject.scene.circles[i].numbersInside.add(gameObject.value);
+                console.log([...gameObject.scene.circles[i].numbersInside])
+            } else {
+                // Clear other circles
+                gameObject.scene.circles[i].numbersInside.delete(gameObject.value);
+                gameObject.scene.circles[i].setStrokeStyle(2, 0x1a65ac);
+            }
+        }
+    }
+
 }
 
 function onUp() {

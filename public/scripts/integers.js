@@ -60,8 +60,27 @@ class IntegerGame extends Phaser.Scene
         for (let i = 0; i < NUM_CIRCLES*2; i++) {
             if ( leave_out.includes(i) ) {
                 // Place this text element in a circle
-                var e = (new PolarPoint(canvasX, canvasY, DISTRIBUTION_RADIUS, i*ANGLE/2+ANGLE/2)).endPoint();
+                var e = (new PolarPoint(canvasX, canvasY, DISTRIBUTION_RADIUS, i*ANGLE/2)).endPoint();
                 this.text[i] = this.add.text(e.x, e.y, numbers[i], { fontSize: FONT_HEIGHT+'px', fill: "#ff0000" }).setOrigin(0.5);
+
+                // Assign the number to the correct circle set based on the angle position
+                // 1.  Last position goes into the final AND first circles
+                // 2.  Other odd positions go into a two circles
+                // 3.  Even positions go into a single circle
+                console.log("assigning "+i+": "+numbers[i]);
+                if (i==NUM_CIRCLES*2-1) {
+                    // Last circle and first circle
+                    this.circles[0].numbersInside.add( numbers[i] );
+                    this.circles[NUM_CIRCLES-1].numbersInside.add( numbers[i] );
+                } else if (i%2==0) {
+                    // Even positions in single circle
+                    this.circles[i/2].numbersInside.add( numbers[i] );
+                } else {
+                    // Odd positions in two circles
+                    this.circles[(i-1)/2].numbersInside.add( numbers[i] );
+                    this.circles[(i-1)/2+1].numbersInside.add( numbers[i] );
+                }
+
             } else {
                 // Put this text element on the side
                 var x = CANVAS_WIDTH-SIDEBOARD_EDGE;
@@ -84,6 +103,21 @@ class IntegerGame extends Phaser.Scene
         console.log('mouseUp');
         for(let i=0; i < NUM_CIRCLES; i++) {
             this.scene.circles[i].setStrokeStyle(2, 0x1a65ac);
+            console.log(this.scene.circles[i].numbersInside);
+        }
+
+
+        // Fill in
+        for(let i=0; i < NUM_CIRCLES; i++) {
+            let sum=0;
+            this.scene.circles[i].numbersInside.forEach(num=>{sum+=num;});
+            console.log(sum);
+            if ( this.scene.circles[i].numbersInside.size>0 && sum==0) {
+                // Got this circle right!
+                this.scene.circles[i].setFillStyle(0xccffcc, 0.8);
+            } else {
+                this.scene.circles[i].setFillStyle(0x000000, 0);
+            }
         }
     }
 
@@ -96,7 +130,6 @@ class IntegerGame extends Phaser.Scene
                 // Number is inside this circle
                 gameObject.scene.circles[i].setStrokeStyle(5, 0xff65ac);
                 gameObject.scene.circles[i].numbersInside.add(gameObject.value);
-                console.log([...gameObject.scene.circles[i].numbersInside])
             } else {
                 // Clear other circles
                 gameObject.scene.circles[i].numbersInside.delete(gameObject.value);
@@ -105,10 +138,6 @@ class IntegerGame extends Phaser.Scene
         }
     }
 
-}
-
-function onUp() {
-    console.log("Mouse up");
 }
 
 function getNumberSet(numberOfCircles, minNumber, maxNumber) {

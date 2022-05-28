@@ -23,29 +23,29 @@ class PolarPoint {
     endPoint() {
         return new PolarPoint(this.x+this.r*Math.cos(this.theta), this.y+this.r*Math.sin(this.theta));
     }
-  }
+}
 
-class Example extends Phaser.Scene
+class IntegerGame extends Phaser.Scene
 {
     constructor ()
     {
         super();
         this.i = 0;
         this.text = [];
+        this.circles = [];
     }
 
     create ()
     {
-        var circles = [];
-        
         var canvasX=CANVAS_WIDTH/2;
         var canvasY=CANVAS_HEIGHT/2
         for (let i = 0; i < NUM_CIRCLES; i++) {
             var e = (new PolarPoint(canvasX, canvasY, DISTRIBUTION_RADIUS, i*ANGLE)).endPoint();
-            circles[i] = this.add.circle(e.x, e.y, CIRCLE_RADIUS);
-            circles[i].setStrokeStyle(2, 0x1a65ac);
+            this.circles[i] = this.add.circle(e.x, e.y, CIRCLE_RADIUS);
+            this.circles[i].setStrokeStyle(2, 0x1a65ac);
+            this.circles[i].numbersInside = new Set();
         }
-        
+
         var numbers = getNumberSet(NUM_CIRCLES, -10, 10);
 
         var leave_out=[1, 3, 7, 8, 11];
@@ -72,25 +72,36 @@ class Example extends Phaser.Scene
                 this.text[i].setInteractive();
                 this.input.setDraggable(this.text[i]);
             }
+            this.text[i].value = numbers[i];
         }
 
         // Set event handlers
         this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
             gameObject.x = dragX;
             gameObject.y = dragY;
-            
+
             for(let i=0; i < NUM_CIRCLES; i++) {
-                if (Phaser.Math.Distance.Between(circles[i].x, circles[i].y, dragX, dragY) < circles[i].radius) {
-                    circles[i].setStrokeStyle(5, 0xff65ac);
+                if (Phaser.Math.Distance.Between(gameObject.scene.circles[i].x, gameObject.scene.circles[i].y, dragX, dragY) < gameObject.scene.circles[i].radius) {
+                    // Number is inside this circle
+                    gameObject.scene.circles[i].setStrokeStyle(5, 0xff65ac);
+                    gameObject.scene.circles[i].numbersInside.add(gameObject.value);
+                    console.log([...gameObject.scene.circles[i].numbersInside])
                 } else {
-                    circles[i].setStrokeStyle(2, 0x1a65ac);
+                    // Clear other circles
+                    gameObject.scene.circles[i].numbersInside.delete(gameObject.value);
+                    gameObject.scene.circles[i].setStrokeStyle(2, 0x1a65ac);
                 }
             }
         });
 
-        this.input.on('pointerup', function (pointer) {
-            console.log('mouseUp');    
-        }, this);
+        this.input.on('pointerup', this.mouseUp);
+    }
+
+    mouseUp(pointer) {
+        console.log('mouseUp');
+        for(let i=0; i < NUM_CIRCLES; i++) {
+            this.scene.circles[i].setStrokeStyle(2, 0x1a65ac);
+        }
     }
 }
 
@@ -154,15 +165,13 @@ function hasNoRepeats(finalList) {
     return false;
 }
 
-
-
 const config = {
     type: Phaser.WEBGL,
     parent: 'phaser-example',
     width: CANVAS_WIDTH,
     height: CANVAS_HEIGHT,
     backgroundColor: '#2d2d2d',
-    scene: [ Example ]
+    scene: [ IntegerGame ]
 };
 
 const game = new Phaser.Game(config);

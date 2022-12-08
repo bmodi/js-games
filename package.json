@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/bmodi/stars3#readme",
   "dependencies": {
-    "express": "^4.16.4",
+    "express": "^4.18.2",
     "serve-favicon": "^2.5.0"
   }
 }

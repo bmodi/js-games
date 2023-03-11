@@ -2,7 +2,7 @@
 
 A few games for learning Javascript with.
 
-Install node, run "npm install" to install dependency modules then run:
+Install node (see https://nodejs.org/), run "npm install" to install dependency modules then run:
 
   PORT=8080 node index.js
 

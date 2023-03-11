@@ -1,14 +1,27 @@
+// Board constants
 const CANVAS_WIDTH=1000;
 const CANVAS_HEIGHT=800;
 const SIDEBOARD_EDGE=100;
 const SIDEBOARD_TOP=50;
 const SIDEBOARD_SPACING=50;
-const FONT_HEIGHT=30;
 const NUM_CIRCLES=7;
 const CIRCLE_RADIUS=130;
 const DISTRIBUTION_RADIUS=200;
-const ANGLE=360.0/NUM_CIRCLES * Math.PI/180;
+const DISTRIBUTION_ANGLE=360.0/NUM_CIRCLES * Math.PI/180;
 const NUM_TO_LEAVE=5;
+const BOARD_BACKGROUND_COLOUR='#2d2d2d';
+
+// Circle style
+const DEFAULT_CIRCLE_COLOUR=0x1a65ac;
+const DEFAULT_CIRCLE_STROKE_WIDTH=2;
+const CORRECT_CIRCLE_FILL_COLOUR=0x00aa33;
+const CORRECT_CIRCLE_OPACITY=0.5;
+const DROP_CIRCLE_HIGHLIGHT_COLOUR=0xff65ac;
+
+// Label style
+const FONT_HEIGHT=30;
+const FIXED_LABEL_COLOUR="#ff0000";
+const SIDE_LABEL_COLOUR="#00ffff";
 
 
 class PolarPoint {
@@ -40,9 +53,9 @@ class IntegerGame extends Phaser.Scene
         var canvasX=CANVAS_WIDTH/2;
         var canvasY=CANVAS_HEIGHT/2
         for (let i = 0; i < NUM_CIRCLES; i++) {
-            var e = (new PolarPoint(canvasX, canvasY, DISTRIBUTION_RADIUS, i*ANGLE)).endPoint();
+            var e = (new PolarPoint(canvasX, canvasY, DISTRIBUTION_RADIUS, i*DISTRIBUTION_ANGLE)).endPoint();
             this.circles[i] = this.add.circle(e.x, e.y, CIRCLE_RADIUS);
-            this.circles[i].setStrokeStyle(2, 0x1a65ac);
+            this.circles[i].setStrokeStyle(DEFAULT_CIRCLE_STROKE_WIDTH, DEFAULT_CIRCLE_COLOUR);
             this.circles[i].numbersInside = new Set();
         }
 
@@ -60,10 +73,10 @@ class IntegerGame extends Phaser.Scene
         for (let i = 0; i < NUM_CIRCLES*2; i++) {
             if ( leave_out.includes(i) ) {
                 // Place this text element in a circle
-                var e = (new PolarPoint(canvasX, canvasY, DISTRIBUTION_RADIUS, i*ANGLE/2)).endPoint();
-                this.text[i] = this.add.text(e.x, e.y, numbers[i], { fontSize: FONT_HEIGHT+'px', fill: "#ff0000" }).setOrigin(0.5);
+                var e = (new PolarPoint(canvasX, canvasY, DISTRIBUTION_RADIUS, i*DISTRIBUTION_ANGLE/2)).endPoint();
+                this.text[i] = this.add.text(e.x, e.y, numbers[i], { fontSize: FONT_HEIGHT+'px', fill: FIXED_LABEL_COLOUR }).setOrigin(0.5);
 
-                // Assign the number to the correct circle set based on the angle position
+                // Assign the number to the correct circle set based on the DISTRIBUTION_ANGLE position
                 // 1.  Last position goes into the final AND first circles
                 // 2.  Other odd positions go into a two circles
                 // 3.  Even positions go into a single circle
@@ -85,7 +98,7 @@ class IntegerGame extends Phaser.Scene
                 // Put this text element on the side
                 var x = CANVAS_WIDTH-SIDEBOARD_EDGE;
                 var y = SIDEBOARD_TOP+sideboard_order[sideboard_count++]*SIDEBOARD_SPACING;
-                this.text[i] = this.add.text(x, y, numbers[i], { fontSize: FONT_HEIGHT+'px', fill: "#00ffff" }).setOrigin(0.5);
+                this.text[i] = this.add.text(x, y, numbers[i], { fontSize: FONT_HEIGHT+'px', fill: SIDE_LABEL_COLOUR }).setOrigin(0.5);
 
                 // Text elements on the side are draggable
                 this.text[i].setInteractive();
@@ -102,7 +115,7 @@ class IntegerGame extends Phaser.Scene
     mouseUp(pointer) {
         console.log('mouseUp');
         for(let i=0; i < NUM_CIRCLES; i++) {
-            this.scene.circles[i].setStrokeStyle(2, 0x1a65ac);
+            this.scene.circles[i].setStrokeStyle(DEFAULT_CIRCLE_STROKE_WIDTH, DEFAULT_CIRCLE_COLOUR);
             console.log(this.scene.circles[i].numbersInside);
         }
 
@@ -114,7 +127,7 @@ class IntegerGame extends Phaser.Scene
             console.log(sum);
             if ( this.scene.circles[i].numbersInside.size>0 && sum==0) {
                 // Got this circle right!
-                this.scene.circles[i].setFillStyle(0xccffcc, 0.8);
+                this.scene.circles[i].setFillStyle(CORRECT_CIRCLE_FILL_COLOUR, CORRECT_CIRCLE_OPACITY);
             } else {
                 this.scene.circles[i].setFillStyle(0x000000, 0);
             }
@@ -128,12 +141,12 @@ class IntegerGame extends Phaser.Scene
         for(let i=0; i < NUM_CIRCLES; i++) {
             if (Phaser.Math.Distance.Between(gameObject.scene.circles[i].x, gameObject.scene.circles[i].y, dragX, dragY) < gameObject.scene.circles[i].radius) {
                 // Number is inside this circle
-                gameObject.scene.circles[i].setStrokeStyle(5, 0xff65ac);
+                gameObject.scene.circles[i].setStrokeStyle(5, DROP_CIRCLE_HIGHLIGHT_COLOUR);
                 gameObject.scene.circles[i].numbersInside.add(gameObject.value);
             } else {
                 // Clear other circles
                 gameObject.scene.circles[i].numbersInside.delete(gameObject.value);
-                gameObject.scene.circles[i].setStrokeStyle(2, 0x1a65ac);
+                gameObject.scene.circles[i].setStrokeStyle(DEFAULT_CIRCLE_STROKE_WIDTH, DEFAULT_CIRCLE_COLOUR);
             }
         }
     }
@@ -201,7 +214,7 @@ const config = {
     parent: 'phaser-example',
     width: CANVAS_WIDTH,
     height: CANVAS_HEIGHT,
-    backgroundColor: '#2d2d2d',
+    backgroundColor: BOARD_BACKGROUND_COLOUR,
     scene: [ IntegerGame ]
 };
 

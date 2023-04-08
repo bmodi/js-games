@@ -45,6 +45,9 @@ class IntegerGame extends Phaser.Scene
         super();
         this.i = 0;
         this.text = [];
+
+        // These are the drawn circles, indexed from circle 0 being at coordinates (DISTRIBUTION_RADIUS, 0).
+        // This first circle will be the furtherest right circle, with centre right on the x-axis.
         this.circles = [];
     }
 
@@ -60,6 +63,7 @@ class IntegerGame extends Phaser.Scene
         }
 
         var numbers = getNumberSet(NUM_CIRCLES, -10, 10);
+        console.log("answer: ", numbers);
 
         var leave_out=[1, 3, 7, 8, 11];
         var sideboard_order=[1,2,3,4,5,6,7,8,9];
@@ -73,28 +77,29 @@ class IntegerGame extends Phaser.Scene
         for (let i = 0; i < NUM_CIRCLES*2; i++) {
             if ( leave_out.includes(i) ) {
                 // Place this text element in a circle
-                var e = (new PolarPoint(canvasX, canvasY, DISTRIBUTION_RADIUS, i*DISTRIBUTION_ANGLE/2)).endPoint();
+                var e = (new PolarPoint(canvasX, canvasY, DISTRIBUTION_RADIUS, (i-1)*DISTRIBUTION_ANGLE/2)).endPoint();
                 this.text[i] = this.add.text(e.x, e.y, numbers[i], { fontSize: FONT_HEIGHT+'px', fill: FIXED_LABEL_COLOUR }).setOrigin(0.5);
 
                 // Assign the number to the correct circle set based on the DISTRIBUTION_ANGLE position
-                // 1.  Last position goes into the final AND first circles
-                // 2.  Other odd positions go into a two circles
-                // 3.  Even positions go into a single circle
-                console.log("assigning "+i+": "+numbers[i]);
-                if (i==NUM_CIRCLES*2-1) {
+                // 1.  First position goes into the first AND final circles
+                // 2.  Other even positions go into two circles (2,4,6...)
+                // 3.  Odd positions go into a single circle (1,3,5...)
+                if (i==0) {
                     // Last circle and first circle
                     this.circles[0].numbersInside.add( numbers[i] );
                     this.circles[NUM_CIRCLES-1].numbersInside.add( numbers[i] );
                 } else if (i%2==0) {
-                    // Even positions in single circle
-                    this.circles[i/2].numbersInside.add( numbers[i] );
+                    // Even positions in two circles
+                    this.circles[Math.floor((i-1)/2)].numbersInside.add( numbers[i] );
+                    this.circles[Math.floor((i-1)/2+1)].numbersInside.add( numbers[i] );
                 } else {
-                    // Odd positions in two circles
-                    this.circles[(i-1)/2].numbersInside.add( numbers[i] );
-                    this.circles[(i-1)/2+1].numbersInside.add( numbers[i] );
+                    // Odd positions in single circle
+                    console.log("placing element "+i+" inside circle "+Math.floor(i/2)+": "+numbers[i]);
+                    this.circles[Math.floor(i/2)].numbersInside.add( numbers[i] );
                 }
 
             } else {
+                console.log("placing element "+i+" on sideboard: "+numbers[i]);
                 // Put this text element on the side
                 var x = CANVAS_WIDTH-SIDEBOARD_EDGE;
                 var y = SIDEBOARD_TOP+sideboard_order[sideboard_count++]*SIDEBOARD_SPACING;

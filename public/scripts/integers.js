@@ -8,7 +8,8 @@ const NUM_CIRCLES=7;
 const CIRCLE_RADIUS=130;
 const DISTRIBUTION_RADIUS=200;
 const DISTRIBUTION_ANGLE=360.0/NUM_CIRCLES * Math.PI/180;
-const NUM_TO_LEAVE=5;
+const LEAVE_OUT=[1, 3, 7, 8];
+//const LEAVE_OUT=[1, 3, 7, 8, 11];
 const BOARD_BACKGROUND_COLOUR='#2d2d2d';
 
 // Circle style
@@ -46,6 +47,9 @@ class IntegerGame extends Phaser.Scene
         this.i = 0;
         this.text = [];
 
+        this.canvasX=CANVAS_WIDTH/2;
+        this.canvasY=CANVAS_HEIGHT/2
+
         // These are the drawn circles, indexed from circle 0 being at coordinates (DISTRIBUTION_RADIUS, 0).
         // This first circle will be the furtherest right circle, with centre right on the x-axis.
         this.circles = [];
@@ -53,10 +57,8 @@ class IntegerGame extends Phaser.Scene
 
     create ()
     {
-        var canvasX=CANVAS_WIDTH/2;
-        var canvasY=CANVAS_HEIGHT/2
         for (let i = 0; i < NUM_CIRCLES; i++) {
-            var e = (new PolarPoint(canvasX, canvasY, DISTRIBUTION_RADIUS, i*DISTRIBUTION_ANGLE)).endPoint();
+            var e = (new PolarPoint(this.canvasX, this.canvasY, DISTRIBUTION_RADIUS, i*DISTRIBUTION_ANGLE)).endPoint();
             this.circles[i] = this.add.circle(e.x, e.y, CIRCLE_RADIUS);
             this.circles[i].setStrokeStyle(DEFAULT_CIRCLE_STROKE_WIDTH, DEFAULT_CIRCLE_COLOUR);
             this.circles[i].numbersInside = new Set();
@@ -65,8 +67,7 @@ class IntegerGame extends Phaser.Scene
         var numbers = getNumberSet(NUM_CIRCLES, -10, 10);
         console.log("answer: ", numbers);
 
-        var leave_out=[1, 3, 7, 8, 11];
-        var sideboard_order=[1,2,3,4,5,6,7,8,9];
+        var sideboard_order=[1,2,3,4,5,6,7,8,9,10];
         var random_sideboard_order = sideboard_order.map((value) => ({ value, sort: Math.random() }))
             .sort((a, b) => a.sort - b.sort)
             .map(({ value }) => value);
@@ -75,9 +76,9 @@ class IntegerGame extends Phaser.Scene
 
         // Create all game text elements
         for (let i = 0; i < NUM_CIRCLES*2; i++) {
-            if ( leave_out.includes(i) ) {
+            if ( LEAVE_OUT.includes(i) ) {
                 // Place this text element in a circle
-                var e = (new PolarPoint(canvasX, canvasY, DISTRIBUTION_RADIUS, (i-1)*DISTRIBUTION_ANGLE/2)).endPoint();
+                var e = (new PolarPoint(this.canvasX, this.canvasY, DISTRIBUTION_RADIUS, (i-1)*DISTRIBUTION_ANGLE/2)).endPoint();
                 this.text[i] = this.add.text(e.x, e.y, numbers[i], { fontSize: FONT_HEIGHT+'px', fill: FIXED_LABEL_COLOUR }).setOrigin(0.5);
 
                 // Assign the number to the correct circle set based on the DISTRIBUTION_ANGLE position
@@ -124,6 +125,7 @@ class IntegerGame extends Phaser.Scene
             console.log(this.scene.circles[i].numbersInside);
         }
 
+        var solved=true;
 
         // Fill in
         for(let i=0; i < NUM_CIRCLES; i++) {
@@ -135,7 +137,13 @@ class IntegerGame extends Phaser.Scene
                 this.scene.circles[i].setFillStyle(CORRECT_CIRCLE_FILL_COLOUR, CORRECT_CIRCLE_OPACITY);
             } else {
                 this.scene.circles[i].setFillStyle(0x000000, 0);
+                solved=false;
             }
+        }
+
+        if (solved) {
+            console.log("solved");
+            this.scene.add.text(CANVAS_WIDTH/2, CANVAS_HEIGHT/2, "SOLVED!", { fontSize: FONT_HEIGHT*2+'px', fill: SIDE_LABEL_COLOUR }).setOrigin(0.5);
         }
     }
 
